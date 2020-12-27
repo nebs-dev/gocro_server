@@ -18,8 +18,10 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "@resolvers/user";
 import { AuthResolver } from "@resolvers/auth";
+import { RouteResolver } from "@resolvers/route";
 import { getTokenData, isAuthenticated } from "@services/authService";
 import { IClientData } from "@services/JwtService";
+import { LocationResolver } from "@resolvers/location";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -40,7 +42,12 @@ createConnection({
   .then(async () => {
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [UserResolver, AuthResolver],
+        resolvers: [
+          UserResolver,
+          AuthResolver,
+          RouteResolver,
+          LocationResolver,
+        ],
         validate: false,
       }),
       context: async ({ req }) => {

@@ -1,13 +1,24 @@
-import { IsNotEmpty, Length, Max, MinLength } from "class-validator";
+import {
+  IsDefined,
+  IsNotEmpty,
+  IsOptional,
+  Length,
+  Max,
+  MinLength,
+  ValidateNested,
+} from "class-validator";
+import { cpuUsage } from "process";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Location } from "./Location";
 
 export interface IRoute {
   id: number;
@@ -15,10 +26,11 @@ export interface IRoute {
   description: string;
   details: string;
   average_rate: number;
-  fitness_level: number;
-  experience: number;
+  fitness_level: bigint;
+  experience: bigint;
   note: string;
   active: Boolean;
+  location: Location;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,6 +41,12 @@ export class Route extends BaseEntity implements IRoute {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Field(() => Location)
+  @ManyToOne(() => Location, (location) => location.routes)
+  @IsDefined({ always: true })
+  @ValidateNested()
+  location: Location;
 
   @Field(() => String)
   @Column({
@@ -63,26 +81,29 @@ export class Route extends BaseEntity implements IRoute {
   })
   details: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   @Column("decimal", { precision: 2, scale: 2, nullable: true })
-  @Max(10)
+  @Max(10, { always: true })
+  @IsOptional()
   average_rate: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
-  @Max(5)
-  fitness_level: number;
+  @IsOptional()
+  @Max(5, { always: true })
+  fitness_level: bigint;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
-  @Max(5)
-  experience: number;
+  @IsOptional()
+  @Max(5, { always: true })
+  experience: bigint;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @Column("longtext", { nullable: true })
+  @IsOptional()
   note: string;
 
-  @Field(() => Boolean)
   @Column("tinyint", { default: 1 })
   active: boolean;
 
