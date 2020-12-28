@@ -22,6 +22,8 @@ import { RouteResolver } from "@resolvers/route";
 import { getTokenData, isAuthenticated } from "@services/authService";
 import { IClientData } from "@services/JwtService";
 import { LocationResolver } from "@resolvers/location";
+import { CategoryResolver } from "@resolvers/category";
+import { ClientResolver } from "@resolvers/client";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -47,6 +49,8 @@ createConnection({
           AuthResolver,
           RouteResolver,
           LocationResolver,
+          CategoryResolver,
+          ClientResolver,
         ],
         validate: false,
       }),

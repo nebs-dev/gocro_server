@@ -7,17 +7,23 @@ import {
   MinLength,
   ValidateNested,
 } from "class-validator";
-import { cpuUsage } from "process";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Category } from "./Category";
+import { Client } from "./Client";
+import { Day } from "./Day";
 import { Location } from "./Location";
 
 export interface IRoute {
@@ -31,12 +37,15 @@ export interface IRoute {
   note: string;
   active: Boolean;
   location: Location;
-  createdAt: Date;
-  updatedAt: Date;
+  categories: Category[];
+  client: Client;
+  days: Day[];
+  created_at: Date;
+  updated_at: Date;
 }
 
 @ObjectType()
-@Entity()
+@Entity("routes")
 export class Route extends BaseEntity implements IRoute {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -44,9 +53,37 @@ export class Route extends BaseEntity implements IRoute {
 
   @Field(() => Location)
   @ManyToOne(() => Location, (location) => location.routes)
+  @JoinColumn({ name: "location_id" })
   @IsDefined({ always: true })
   @ValidateNested()
   location: Location;
+
+  @Field(() => [Category], { nullable: true })
+  @ManyToMany(() => Category, (category: Category) => category.routes)
+  @JoinTable({
+    name: "category_route",
+    joinColumn: {
+      name: "route_id",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "category_id",
+      referencedColumnName: "id",
+    },
+  })
+  categories: Category[];
+
+  @Field(() => Client)
+  @ManyToOne(() => Client, (client) => client.routes)
+  @JoinColumn({ name: "client_id" })
+  @IsDefined({ always: true })
+  @ValidateNested()
+  client: Client;
+
+  @Field(() => [Day])
+  @OneToMany(() => Day, (day) => day.route)
+  @ValidateNested()
+  days: Day[];
 
   @Field(() => String)
   @Column({
@@ -107,9 +144,9 @@ export class Route extends BaseEntity implements IRoute {
   @Column("tinyint", { default: 1 })
   active: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn({ name: "created_at" })
+  created_at: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @UpdateDateColumn({ name: "updated_at" })
+  updated_at: Date;
 }

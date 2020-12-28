@@ -25,12 +25,12 @@ export interface IUser {
   password: string;
   role: UserRoles;
   active: Boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 @ObjectType()
-@Entity()
+@Entity("users")
 export class User extends BaseEntity implements IUser {
   @BeforeUpdate()
   async hashPassword() {
@@ -93,9 +93,9 @@ export class User extends BaseEntity implements IUser {
   @Column("tinyint", { default: 0 })
   active: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn({ name: "created_at" })
+  created_at: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @UpdateDateColumn({ name: "updated_at" })
+  updated_at: Date;
 }

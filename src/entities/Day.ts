@@ -1,33 +1,46 @@
-import { IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsDefined, IsNotEmpty, Length, MinLength } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Route } from "./Route";
+import { TehnicalInfo } from "./TehnicalInfo";
 
-export interface ILocation {
+export interface IDay {
   id: number;
   title: string;
-  description: string;
+  text: string;
+  route: Route;
+  tehnical_info: TehnicalInfo;
   created_at: Date;
   updated_at: Date;
 }
 
 @ObjectType()
-@Entity("locations")
-export class Location extends BaseEntity implements ILocation {
+@Entity("days")
+export class Day extends BaseEntity implements IDay {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Route, (route) => route.location)
-  routes: Route[];
+  @Field(() => [Route])
+  @ManyToOne(() => Route, (route: Route) => route.days)
+  @JoinColumn({ name: "route_id" })
+  @IsDefined({ always: true })
+  route: Route;
+
+  @Field(() => TehnicalInfo, { nullable: true })
+  @OneToOne(() => TehnicalInfo)
+  @JoinColumn({ name: "tehnical_info_id" })
+  tehnical_info: TehnicalInfo;
 
   @Field(() => String)
   @Column({
@@ -48,7 +61,7 @@ export class Location extends BaseEntity implements ILocation {
   @IsNotEmpty({
     groups: ["create"],
   })
-  description: string;
+  text: string;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

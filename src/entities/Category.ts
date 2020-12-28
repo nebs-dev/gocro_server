@@ -1,32 +1,33 @@
-import { IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsNotEmpty, Length } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Route } from "./Route";
 
-export interface ILocation {
+export interface ICategory {
   id: number;
   title: string;
-  description: string;
+  routes?: Route[];
   created_at: Date;
   updated_at: Date;
 }
 
 @ObjectType()
-@Entity("locations")
-export class Location extends BaseEntity implements ILocation {
+@Entity("categories")
+export class Category extends BaseEntity implements ICategory {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Route, (route) => route.location)
+  @Field(() => [Route], { nullable: true })
+  @ManyToMany(() => Route, (route: Route) => route.categories)
   routes: Route[];
 
   @Field(() => String)
@@ -41,14 +42,6 @@ export class Location extends BaseEntity implements ILocation {
     groups: ["create"],
   })
   title: string;
-
-  @Field(() => String)
-  @Column("longtext")
-  @MinLength(20)
-  @IsNotEmpty({
-    groups: ["create"],
-  })
-  description: string;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, Length } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -11,22 +11,25 @@ import {
 } from "typeorm";
 import { Route } from "./Route";
 
-export interface ILocation {
+export interface IClient {
   id: number;
-  title: string;
-  description: string;
+  name: string;
+  email: string;
+  address: string;
+  routes?: Route[];
   created_at: Date;
   updated_at: Date;
 }
 
 @ObjectType()
-@Entity("locations")
-export class Location extends BaseEntity implements ILocation {
+@Entity("clients")
+export class Client extends BaseEntity implements IClient {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Route, (route) => route.location)
+  @Field(() => [Route], { nullable: true })
+  @OneToMany(() => Route, (route: Route) => route.client)
   routes: Route[];
 
   @Field(() => String)
@@ -40,15 +43,32 @@ export class Location extends BaseEntity implements ILocation {
   @IsNotEmpty({
     groups: ["create"],
   })
-  title: string;
+  name: string;
 
   @Field(() => String)
-  @Column("longtext")
-  @MinLength(20)
+  @Column({
+    length: 100,
+    unique: true,
+  })
+  @IsEmail(undefined, {
+    always: true,
+  })
   @IsNotEmpty({
     groups: ["create"],
   })
-  description: string;
+  email: string;
+
+  @Field(() => String)
+  @Column({
+    length: 255,
+  })
+  @Length(4, 255, {
+    always: true,
+  })
+  @IsNotEmpty({
+    groups: ["create"],
+  })
+  address: string;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

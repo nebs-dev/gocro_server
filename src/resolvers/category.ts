@@ -1,4 +1,4 @@
-import { Location } from "@entities/Location";
+import { Category } from "@entities/Category";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -17,41 +17,38 @@ import {
 } from "type-graphql";
 
 @InputType()
-class LocationInput {
+class CategoryInput {
   @Field()
   title: string;
-  @Field()
-  description: string;
 }
 
 @Resolver()
-export class LocationResolver {
-  @Query(() => [Location])
-  async locations(): Promise<Location[]> {
-    return await Location.find();
+export class CategoryResolver {
+  @Query(() => [Category])
+  async categories(): Promise<Category[]> {
+    return await Category.find({ relations: ["routes"] });
   }
 
-  @Query(() => Location)
-  async location(@Arg("id") id: number): Promise<Location> {
-    return await Location.findOneOrFail(id);
+  @Query(() => Category)
+  async category(@Arg("id") id: number): Promise<Category> {
+    return await Category.findOneOrFail(id);
   }
 
-  @Mutation(() => Location)
-  async createLocation(
-    @Arg("params") params: LocationInput,
+  @Mutation(() => Category)
+  async createCategory(
+    @Arg("params") params: CategoryInput,
     @Ctx() context: MyContext
-  ): Promise<Location> {
+  ): Promise<Category> {
     if (!context.isAdmin) {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const location = new Location();
-    const { title, description } = params;
+    const category = new Category();
+    const { title } = params;
 
-    location.title = title;
-    location.description = description;
+    category.title = title;
 
-    const errors = await validate(location, {
+    const errors = await validate(category, {
       groups: ["create"],
       forbidUnknownValues: true,
       skipMissingProperties: true,
@@ -62,9 +59,9 @@ export class LocationResolver {
     }
 
     try {
-      await location.save();
+      await category.save();
 
-      return location;
+      return category;
     } catch (e) {
       throw new ApolloError(e);
     }

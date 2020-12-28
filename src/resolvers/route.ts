@@ -40,13 +40,22 @@ class RouteInput {
 export class RouteResolver {
   @Query(() => [Route])
   async routes(): Promise<Route[]> {
-    const routes = await Route.find();
-    return routes;
+    return await Route.find({
+      relations: [
+        "location",
+        "categories",
+        "client",
+        "days",
+        "days.tehnical_info",
+      ],
+    });
   }
 
   @Query(() => Route)
   async route(@Arg("id") id: number): Promise<Route> {
-    return await Route.findOneOrFail(id, { relations: ["location"] });
+    return await Route.findOneOrFail(id, {
+      relations: ["location", "categories"],
+    });
   }
 
   @Mutation(() => Route)
