@@ -24,6 +24,7 @@ import { IClientData } from "@services/JwtService";
 import { LocationResolver } from "@resolvers/location";
 import { CategoryResolver } from "@resolvers/category";
 import { ClientResolver } from "@resolvers/client";
+import { GuidedInfoResolver } from "@resolvers/guidedInfo";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -51,6 +52,7 @@ createConnection({
           LocationResolver,
           CategoryResolver,
           ClientResolver,
+          GuidedInfoResolver,
         ],
         validate: false,
       }),
@@ -79,8 +81,6 @@ createConnection({
 
     apolloServer.applyMiddleware({ app });
 
-    // app.use(cors());
-
     // enable files upload
     app.use(
       fileUpload({
@@ -88,9 +88,6 @@ createConnection({
       })
     );
 
-    // app.use(express.json());
-    // app.use(express.urlencoded({ extended: true }));
-    // app.use(cookieParser(cookieProps.secret));
     app.use(pagination);
 
     // Show routes called in console during development
@@ -99,21 +96,9 @@ createConnection({
     }
 
     // Security
-    // if (process.env.NODE_ENV === "production") {
-    //   app.use(helmet());
-    // }
-
-    // Add APIs
-    // app.use("/api", BaseRouter);
-
-    // Print API errors
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // app.use((err: Error, req: Request, res: Response) => {
-    //   logger.err(err, true);
-    //   return res.json({
-    //     error: err.message,
-    //   });
-    // });
+    if (process.env.NODE_ENV === "production") {
+      app.use(helmet());
+    }
   })
   .catch((error) => console.log(error));
 

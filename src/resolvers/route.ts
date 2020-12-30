@@ -47,6 +47,8 @@ export class RouteResolver {
         "client",
         "days",
         "days.tehnical_info",
+        "tehnical_info",
+        "guided_info",
       ],
     });
   }

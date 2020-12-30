@@ -18,16 +18,19 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Category } from "./Category";
 import { Client } from "./Client";
 import { Day } from "./Day";
+import { GuidedInfo } from "./GuidedInfo";
 import { Location } from "./Location";
+import { TehnicalInfo } from "./TehnicalInfo";
 
 export interface IRoute {
-  id: number;
+  id: bigint;
   title: string;
   description: string;
   details: string;
@@ -49,7 +52,7 @@ export interface IRoute {
 export class Route extends BaseEntity implements IRoute {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id: number;
+  id: bigint;
 
   @Field(() => Location)
   @ManyToOne(() => Location, (location) => location.routes)
@@ -84,6 +87,16 @@ export class Route extends BaseEntity implements IRoute {
   @OneToMany(() => Day, (day) => day.route)
   @ValidateNested()
   days: Day[];
+
+  @Field(() => TehnicalInfo, { nullable: true })
+  @OneToOne(() => TehnicalInfo)
+  @JoinColumn({ name: "tehnical_info_id" })
+  tehnical_info: TehnicalInfo;
+
+  @Field(() => GuidedInfo, { nullable: true })
+  @OneToOne(() => GuidedInfo, (guided_info) => guided_info.route)
+  @JoinColumn({ name: "guided_info_id" })
+  guided_info: GuidedInfo;
 
   @Field(() => String)
   @Column({
