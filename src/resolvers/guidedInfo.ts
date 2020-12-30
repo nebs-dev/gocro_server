@@ -66,46 +66,12 @@ export class GuidedInfoResolver {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const guidedInfo = new GuidedInfo();
-    const {
-      age_min,
-      age_max,
-      starts_from,
-      people_min,
-      people_max,
-      accommodation,
-      meals,
-      transfer,
-      equipment,
-      insurance,
-      availability_from,
-      availability_to,
-      discount,
-      cancelation_policy,
-      not_include,
-      additional_charge,
-      route_id,
-    } = params;
+    let guidedInfo = new GuidedInfo();
+    const { route_id } = params;
 
     const route = await Route.findOneOrFail({ id: route_id });
-
-    guidedInfo.age_min = age_min;
-    guidedInfo.age_max = age_max;
-    guidedInfo.starts_from = starts_from;
-    guidedInfo.people_min = people_min;
-    guidedInfo.people_max = people_max;
-    guidedInfo.accommodation = accommodation;
-    guidedInfo.meals = meals;
-    guidedInfo.transfer = transfer;
-    guidedInfo.equipment = equipment;
-    guidedInfo.insurance = insurance;
-    guidedInfo.availability_from = availability_from;
-    guidedInfo.availability_to = availability_to;
-    guidedInfo.discount = discount;
-    guidedInfo.cancelation_policy = cancelation_policy;
-    guidedInfo.not_include = not_include;
-    guidedInfo.additional_charge = additional_charge;
-    guidedInfo.route = route;
+    params = { ...params, ...{ route } };
+    guidedInfo = Object.assign(guidedInfo, params);
 
     const errors = await validate(guidedInfo, {
       groups: ["create"],

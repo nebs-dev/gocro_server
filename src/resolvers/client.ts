@@ -47,12 +47,8 @@ export class ClientResolver {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const client = new Client();
-    const { name, email, address } = params;
-
-    client.name = name;
-    client.email = email;
-    client.address = address;
+    let client = new Client();
+    client = Object.assign(client, params);
 
     const errors = await validate(client, {
       groups: ["create"],

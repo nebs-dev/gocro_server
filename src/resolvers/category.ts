@@ -43,10 +43,8 @@ export class CategoryResolver {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const category = new Category();
-    const { title } = params;
-
-    category.title = title;
+    let category = new Category();
+    category = Object.assign(category, params);
 
     const errors = await validate(category, {
       groups: ["create"],

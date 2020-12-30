@@ -69,26 +69,12 @@ export class RouteResolver {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const route = new Route();
-    const {
-      title,
-      description,
-      details,
-      fitness_level,
-      experience,
-      note,
-      location_id,
-    } = params;
+    let route = new Route();
+    const { location_id } = params;
 
     const location = await Location.findOneOrFail({ id: location_id });
-
-    route.title = title;
-    route.description = description;
-    route.details = details;
-    route.fitness_level = fitness_level;
-    route.experience = experience;
-    route.note = note;
-    route.location = location;
+    params = { ...params, ...{ location } };
+    route = Object.assign(route, params);
 
     const errors = await validate(route, {
       groups: ["create"],

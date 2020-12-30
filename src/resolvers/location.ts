@@ -45,11 +45,8 @@ export class LocationResolver {
       throw new ForbiddenError("You are not allowed to access this.");
     }
 
-    const location = new Location();
-    const { title, description } = params;
-
-    location.title = title;
-    location.description = description;
+    let location = new Location();
+    location = Object.assign(location, params);
 
     const errors = await validate(location, {
       groups: ["create"],

@@ -1,4 +1,3 @@
-import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 import StatusCodes from "http-status-codes";
@@ -6,7 +5,6 @@ import express from "express";
 
 import "express-async-errors";
 
-import BaseRouter from "./routes";
 import logger from "@shared/Logger";
 
 import "reflect-metadata";
