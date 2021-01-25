@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsNotEmpty, Length, MinLength, ValidateNested } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Event } from "./Event";
 import { Route } from "./Route";
 
 export interface ILocation {
@@ -28,6 +29,11 @@ export class Location extends BaseEntity implements ILocation {
 
   @OneToMany(() => Route, (route) => route.location)
   routes: Route[];
+
+  @Field(() => [Event])
+  @OneToMany(() => Event, (event) => event.location)
+  @ValidateNested()
+  events: Event[];
 
   @Field(() => String)
   @Column({

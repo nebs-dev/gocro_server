@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length } from "class-validator";
+import { IsNotEmpty, Length, ValidateNested } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -6,15 +6,18 @@ import {
   CreateDateColumn,
   Entity,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Event } from "./Event";
 import { Route } from "./Route";
 
 export interface ICategory {
   id: number;
   title: string;
   routes?: Route[];
+  events?: Event[];
   created_at: Date;
   updated_at: Date;
 }
@@ -29,6 +32,11 @@ export class Category extends BaseEntity implements ICategory {
   @Field(() => [Route], { nullable: true })
   @ManyToMany(() => Route, (route: Route) => route.categories)
   routes: Route[];
+
+  @Field(() => [Event])
+  @OneToMany(() => Event, (event) => event.category)
+  @ValidateNested()
+  events: Event[];
 
   @Field(() => String)
   @Column({

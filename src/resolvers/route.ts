@@ -32,8 +32,10 @@ class RouteInput {
   experience: bigint;
   @Field({ nullable: true })
   note: string;
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   location_id: number;
+  @Field(() => Int, { nullable: true })
+  category_id: number;
 }
 
 @Resolver()

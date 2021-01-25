@@ -6,6 +6,7 @@ import express from "express";
 import "express-async-errors";
 
 import logger from "@shared/Logger";
+import { databaseData } from "@shared/constants";
 
 import "reflect-metadata";
 import { createConnection } from "typeorm";
@@ -23,6 +24,8 @@ import { LocationResolver } from "@resolvers/location";
 import { CategoryResolver } from "@resolvers/category";
 import { ClientResolver } from "@resolvers/client";
 import { GuidedInfoResolver } from "@resolvers/guidedInfo";
+import { PriceResolver } from "@resolvers/price";
+import { EventResolver } from "@resolvers/event";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -31,11 +34,11 @@ const app = express();
 
 createConnection({
   type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "root",
-  password: "",
-  database: "gocro_db",
+  host: databaseData.DB_HOST,
+  port: databaseData.DB_PORT,
+  username: databaseData.DB_USER,
+  password: databaseData.DB_PASSWORD,
+  database: databaseData.DB_NAME,
   entities: [__dirname + "/entities/*.ts"],
   synchronize: true,
   logging: false,
@@ -51,6 +54,8 @@ createConnection({
           CategoryResolver,
           ClientResolver,
           GuidedInfoResolver,
+          PriceResolver,
+          EventResolver,
         ],
         validate: false,
       }),

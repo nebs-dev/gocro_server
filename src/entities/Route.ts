@@ -27,6 +27,7 @@ import { Client } from "./Client";
 import { Day } from "./Day";
 import { GuidedInfo } from "./GuidedInfo";
 import { Location } from "./Location";
+import { Price } from "./Price";
 import { TehnicalInfo } from "./TehnicalInfo";
 
 export interface IRoute {
@@ -43,6 +44,7 @@ export interface IRoute {
   categories: Category[];
   client: Client;
   days: Day[];
+  prices: Price[];
   created_at: Date;
   updated_at: Date;
 }
@@ -87,6 +89,11 @@ export class Route extends BaseEntity implements IRoute {
   @OneToMany(() => Day, (day) => day.route)
   @ValidateNested()
   days: Day[];
+
+  @Field(() => [Price])
+  @OneToMany(() => Price, (price) => price.route)
+  @ValidateNested()
+  prices: Price[];
 
   @Field(() => TehnicalInfo, { nullable: true })
   @OneToOne(() => TehnicalInfo)
