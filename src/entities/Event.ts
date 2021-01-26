@@ -1,4 +1,3 @@
-import { BucketLocationConstraint } from "aws-sdk/clients/s3";
 import {
   IsDefined,
   IsNotEmpty,
@@ -20,6 +19,7 @@ import {
 } from "typeorm";
 import { Category } from "./Category";
 import { Location } from "./Location";
+import { Price } from "./Price";
 
 export interface IEvent {
   id: number;
@@ -27,6 +27,7 @@ export interface IEvent {
   text: string;
   category: Category;
   location: Location;
+  prices: Price[];
   created_at: Date;
   updated_at: Date;
 }
@@ -51,6 +52,11 @@ export class Event extends BaseEntity implements IEvent {
   @IsDefined({ always: true })
   @ValidateNested()
   location: Location;
+
+  @Field(() => [Price])
+  @OneToMany(() => Price, (price) => price.event)
+  @ValidateNested()
+  prices: Price[];
 
   @Field(() => String)
   @Column({

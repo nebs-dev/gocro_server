@@ -17,8 +17,14 @@ import {
 } from "type-graphql";
 
 @InputType()
-class CategoryInput {
+class CategoryCreateInput {
   @Field()
+  title: string;
+}
+
+@InputType()
+class CategoryUpdateInput {
+  @Field(() => String, { nullable: true })
   title: string;
 }
 
@@ -36,7 +42,7 @@ export class CategoryResolver {
 
   @Mutation(() => Category)
   async createCategory(
-    @Arg("params") params: CategoryInput,
+    @Arg("params") params: CategoryCreateInput,
     @Ctx() context: MyContext
   ): Promise<Category> {
     if (!context.isAdmin) {
@@ -53,7 +59,38 @@ export class CategoryResolver {
     });
 
     if (errors.length > 0) {
-      throw new UserInputError("Invalid location input", { errors });
+      throw new UserInputError("Invalid category input", { errors });
+    }
+
+    try {
+      await category.save();
+
+      return category;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Category)
+  async updateCategory(
+    @Arg("id") id: number,
+    @Arg("params") params: CategoryUpdateInput,
+    @Ctx() context: MyContext
+  ): Promise<Category> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let category = await Category.findOneOrFail(id);
+    category = Object.assign(category, params);
+
+    const errors = await validate(category, {
+      forbidUnknownValues: true,
+      skipMissingProperties: true,
+    });
+
+    if (errors.length > 0) {
+      throw new UserInputError("Invalid category input", { errors });
     }
 
     try {

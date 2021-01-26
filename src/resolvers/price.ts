@@ -1,3 +1,4 @@
+import { Event } from "@entities/Event";
 import { Price } from "@entities/Price";
 import { Route } from "@entities/Route";
 import { MyContext } from "@shared/types";
@@ -31,17 +32,17 @@ class PriceInput {
   @Field(() => Int, { nullable: true })
   people_max: bigint;
   @Field(() => Int, { nullable: true })
-  route_id: bigint;
+  route_id: number;
   @Field(() => Int, { nullable: true })
-  event_id: bigint;
+  event_id: number;
 }
 
 @InputType()
 class PriceFilterInput {
   @Field(() => Int, { nullable: true })
-  route_id: bigint;
+  route_id: number;
   @Field(() => Int, { nullable: true })
-  event_id: bigint;
+  event_id: number;
 }
 
 @Resolver()
@@ -82,7 +83,8 @@ export class PriceResolver {
     }
 
     if (event_id) {
-      // TODO
+      const event = await Event.findOneOrFail({ id: event_id });
+      params = { ...params, ...{ event } };
     }
 
     price = Object.assign(price, params);
@@ -101,6 +103,56 @@ export class PriceResolver {
       await price.save();
 
       return price;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Price)
+  async updatePrice(
+    @Arg("id") id: number,
+    @Arg("params") params: PriceInput,
+    @Ctx() context: MyContext
+  ): Promise<Price> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let price = await Price.findOneOrFail(id);
+    price = Object.assign(price, params);
+
+    const errors = await validate(price, {
+      forbidUnknownValues: true,
+      skipMissingProperties: true,
+    });
+
+    if (errors.length > 0) {
+      throw new UserInputError("Invalid price input", { errors });
+    }
+
+    try {
+      await price.save();
+
+      return price;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deletePrice(
+    @Arg("id") id: number,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let price = await Price.findOneOrFail(id);
+
+    try {
+      await price.remove();
+      return true;
     } catch (e) {
       throw new ApolloError(e);
     }

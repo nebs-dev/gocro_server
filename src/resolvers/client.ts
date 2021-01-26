@@ -17,12 +17,22 @@ import {
 } from "type-graphql";
 
 @InputType()
-class ClientInput {
+class ClientCreateInput {
   @Field()
   name: string;
   @Field()
   email: string;
   @Field()
+  address: string;
+}
+
+@InputType()
+class ClientUpdateInput {
+  @Field(() => String, { nullable: true })
+  name: string;
+  @Field(() => String, { nullable: true })
+  email: string;
+  @Field(() => String, { nullable: true })
   address: string;
 }
 
@@ -40,7 +50,7 @@ export class ClientResolver {
 
   @Mutation(() => Client)
   async createClient(
-    @Arg("params") params: ClientInput,
+    @Arg("params") params: ClientCreateInput,
     @Ctx() context: MyContext
   ): Promise<Client> {
     if (!context.isAdmin) {
@@ -64,6 +74,56 @@ export class ClientResolver {
       await client.save();
 
       return client;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Client)
+  async updateClient(
+    @Arg("id") id: number,
+    @Arg("params") params: ClientUpdateInput,
+    @Ctx() context: MyContext
+  ): Promise<Client> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let client = await Client.findOneOrFail(id);
+    client = Object.assign(client, params);
+
+    const errors = await validate(client, {
+      forbidUnknownValues: true,
+      skipMissingProperties: true,
+    });
+
+    if (errors.length > 0) {
+      throw new UserInputError("Invalid client input", { errors });
+    }
+
+    try {
+      await client.save();
+
+      return client;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteClient(
+    @Arg("id") id: number,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let client = await Client.findOneOrFail({ id });
+
+    try {
+      await client.remove();
+      return true;
     } catch (e) {
       throw new ApolloError(e);
     }

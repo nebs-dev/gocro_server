@@ -29,7 +29,9 @@ export class Client extends BaseEntity implements IClient {
   id: number;
 
   @Field(() => [Route], { nullable: true })
-  @OneToMany(() => Route, (route: Route) => route.client)
+  @OneToMany(() => Route, (route: Route) => route.client, {
+    onDelete: "SET NULL",
+  })
   routes: Route[];
 
   @Field(() => String)

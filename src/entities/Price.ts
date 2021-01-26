@@ -18,6 +18,7 @@ import {
 
 import { Route } from "./Route";
 import { IsHigherThan } from "@shared/decorators";
+import { Event } from "./Event";
 
 export interface IPrice {
   id: bigint;
@@ -43,6 +44,12 @@ export class Price extends BaseEntity implements IPrice {
   @JoinColumn({ name: "route_id" })
   @ValidateNested()
   route: Route;
+
+  @Field(() => Event)
+  @ManyToOne(() => Event, (event) => event.prices)
+  @JoinColumn({ name: "evemt_id" })
+  @ValidateNested()
+  event: Event;
 
   @Field(() => Number)
   @Column("decimal", { precision: 6, scale: 2 })

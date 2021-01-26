@@ -7,6 +7,7 @@ import {
   ForbiddenError,
   UserInputError,
 } from "apollo-server-express";
+import { NumberAttributeValue } from "aws-sdk/clients/dynamodbstreams";
 import { validate } from "class-validator";
 import {
   Arg,

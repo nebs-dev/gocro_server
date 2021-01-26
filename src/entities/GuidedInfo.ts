@@ -40,7 +40,9 @@ export class GuidedInfo extends BaseEntity implements IGuidedInfo {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Route, (route) => route.guided_info)
+  @OneToOne(() => Route, (route) => route.guided_info, {
+    onDelete: "CASCADE",
+  })
   route: Route;
 
   @Field(() => Int, { nullable: true })

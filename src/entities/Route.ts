@@ -31,7 +31,7 @@ import { Price } from "./Price";
 import { TehnicalInfo } from "./TehnicalInfo";
 
 export interface IRoute {
-  id: bigint;
+  id: number;
   title: string;
   description: string;
   details: string;
@@ -54,12 +54,14 @@ export interface IRoute {
 export class Route extends BaseEntity implements IRoute {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id: bigint;
+  id: number;
 
   @Field(() => Location)
   @ManyToOne(() => Location, (location) => location.routes)
   @JoinColumn({ name: "location_id" })
-  @IsDefined({ always: true })
+  @IsNotEmpty({
+    groups: ["create"],
+  })
   @ValidateNested()
   location: Location;
 
@@ -81,7 +83,6 @@ export class Route extends BaseEntity implements IRoute {
   @Field(() => Client)
   @ManyToOne(() => Client, (client) => client.routes)
   @JoinColumn({ name: "client_id" })
-  @IsDefined({ always: true })
   @ValidateNested()
   client: Client;
 
@@ -101,7 +102,9 @@ export class Route extends BaseEntity implements IRoute {
   tehnical_info: TehnicalInfo;
 
   @Field(() => GuidedInfo, { nullable: true })
-  @OneToOne(() => GuidedInfo, (guided_info) => guided_info.route)
+  @OneToOne(() => GuidedInfo, (guided_info) => guided_info.route, {
+    onDelete: "SET NULL",
+  })
   @JoinColumn({ name: "guided_info_id" })
   guided_info: GuidedInfo;
 
@@ -132,7 +135,7 @@ export class Route extends BaseEntity implements IRoute {
 
   @Field(() => String)
   @Column("longtext")
-  @MinLength(20)
+  @MinLength(20, { always: true })
   @IsNotEmpty({
     groups: ["create"],
   })

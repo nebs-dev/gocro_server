@@ -17,10 +17,18 @@ import {
 } from "type-graphql";
 
 @InputType()
-class LocationInput {
+class LocationCreateInput {
   @Field()
   title: string;
   @Field()
+  description: string;
+}
+
+@InputType()
+class LocationUpdateInput {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
   description: string;
 }
 
@@ -38,7 +46,7 @@ export class LocationResolver {
 
   @Mutation(() => Location)
   async createLocation(
-    @Arg("params") params: LocationInput,
+    @Arg("params") params: LocationCreateInput,
     @Ctx() context: MyContext
   ): Promise<Location> {
     if (!context.isAdmin) {
@@ -62,6 +70,56 @@ export class LocationResolver {
       await location.save();
 
       return location;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Location)
+  async updateLocation(
+    @Arg("id") id: number,
+    @Arg("params") params: LocationCreateInput,
+    @Ctx() context: MyContext
+  ): Promise<Location> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let location = await Location.findOneOrFail(id);
+    location = Object.assign(location, params);
+
+    const errors = await validate(location, {
+      forbidUnknownValues: true,
+      skipMissingProperties: true,
+    });
+
+    if (errors.length > 0) {
+      throw new UserInputError("Invalid location input", { errors });
+    }
+
+    try {
+      await location.save();
+
+      return location;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteLocation(
+    @Arg("id") id: number,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError("You are not allowed to access this.");
+    }
+
+    let location = await Location.findOneOrFail({ id });
+
+    try {
+      await location.remove();
+      return true;
     } catch (e) {
       throw new ApolloError(e);
     }
