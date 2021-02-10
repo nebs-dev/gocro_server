@@ -73,6 +73,6 @@
       "@server": ["src/Server"]
     }
   },
-  "include": ["src/**/*.ts", "spec/**/*.ts"],
+  "include": ["src/**/*.ts", "spec/**/*.ts", "index.ts"],
   "exclude": ["src/public/"]
 }
