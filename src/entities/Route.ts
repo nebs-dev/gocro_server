@@ -49,6 +49,16 @@ export interface IRoute {
   updated_at: Date;
 }
 
+export const routeRelations = [
+  "location",
+  "categories",
+  "client",
+  "days",
+  "days.tehnical_info",
+  "tehnical_info",
+  "guided_info",
+];
+
 @ObjectType()
 @Entity("routes")
 export class Route extends BaseEntity implements IRoute {

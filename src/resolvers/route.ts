@@ -1,5 +1,5 @@
 import { Location } from "@entities/Location";
-import { Route } from "@entities/Route";
+import { Route, routeRelations } from "@entities/Route";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -9,6 +9,7 @@ import {
 import { validate } from "class-validator";
 import {
   Arg,
+  Args,
   Ctx,
   Field,
   InputType,
@@ -17,6 +18,10 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+
+import { RouteRepository } from "@entities/repositories/RouteRepository";
+import { getCustomRepository } from "typeorm";
+import { RouteListArgs } from "@shared/inputs";
 
 @InputType()
 class RouteCreateInput {
@@ -61,24 +66,17 @@ class RouteUpdateInput {
 @Resolver()
 export class RouteResolver {
   @Query(() => [Route])
-  async routes(): Promise<Route[]> {
-    return await Route.find({
-      relations: [
-        "location",
-        "categories",
-        "client",
-        "days",
-        "days.tehnical_info",
-        "tehnical_info",
-        "guided_info",
-      ],
-    });
+  async routes(
+    @Args() { filters, pagination }: RouteListArgs
+  ): Promise<Route[]> {
+    const routeRepository = getCustomRepository(RouteRepository);
+    return await routeRepository.search(filters, pagination);
   }
 
   @Query(() => Route)
   async route(@Arg("id") id: number): Promise<Route> {
     return await Route.findOneOrFail(id, {
-      relations: ["location", "categories"],
+      relations: routeRelations,
     });
   }
 
