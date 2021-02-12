@@ -1,5 +1,8 @@
-import { Location } from "@entities/Location";
-import { MyContext } from "@shared/types";
+import { Location, locationRelations } from "@entities/Location";
+import { paginate } from "@services/paginatorService";
+import { LocationArgs } from "@shared/inputs";
+import { LocationPaginatorResponse } from "@shared/responses";
+import { MyContext, PaginatorResponseType } from "@shared/types";
 import {
   ApolloError,
   ForbiddenError,
@@ -8,6 +11,7 @@ import {
 import { validate } from "class-validator";
 import {
   Arg,
+  Args,
   Ctx,
   Field,
   InputType,
@@ -34,9 +38,11 @@ class LocationUpdateInput {
 
 @Resolver()
 export class LocationResolver {
-  @Query(() => [Location])
-  async locations(): Promise<Location[]> {
-    return await Location.find();
+  @Query(() => LocationPaginatorResponse)
+  async locations(
+    @Args() { filters, pagination }: LocationArgs
+  ): Promise<PaginatorResponseType> {
+    return await paginate(Location, locationRelations, filters, pagination);
   }
 
   @Query(() => Location)
@@ -78,7 +84,7 @@ export class LocationResolver {
   @Mutation(() => Location)
   async updateLocation(
     @Arg("id") id: number,
-    @Arg("params") params: LocationCreateInput,
+    @Arg("params") params: LocationUpdateInput,
     @Ctx() context: MyContext
   ): Promise<Location> {
     if (!context.isAdmin) {

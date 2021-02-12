@@ -20,6 +20,8 @@ export interface ILocation {
   updated_at: Date;
 }
 
+export const locationRelations = ["events"];
+
 @ObjectType()
 @Entity("locations")
 export class Location extends BaseEntity implements ILocation {
