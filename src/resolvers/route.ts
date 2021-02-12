@@ -1,6 +1,6 @@
 import { Location } from "@entities/Location";
 import { Route, routeRelations } from "@entities/Route";
-import { MyContext } from "@shared/types";
+import { MyContext, PaginatorResponseType } from "@shared/types";
 import {
   ApolloError,
   ForbiddenError,
@@ -22,6 +22,7 @@ import {
 import { RouteRepository } from "@entities/repositories/RouteRepository";
 import { getCustomRepository } from "typeorm";
 import { RouteListArgs } from "@shared/inputs";
+import { RoutePaginatorResponse } from "@shared/responses";
 
 @InputType()
 class RouteCreateInput {
@@ -65,10 +66,10 @@ class RouteUpdateInput {
 
 @Resolver()
 export class RouteResolver {
-  @Query(() => [Route])
+  @Query(() => RoutePaginatorResponse)
   async routes(
     @Args() { filters, pagination }: RouteListArgs
-  ): Promise<Route[]> {
+  ): Promise<PaginatorResponseType> {
     const routeRepository = getCustomRepository(RouteRepository);
     return await routeRepository.search(filters, pagination);
   }
