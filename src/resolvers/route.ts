@@ -147,6 +147,16 @@ export class RouteResolver {
       params = { ...params, ...{ location } };
     }
 
+    if (params.category_ids && params.category_ids.length > 0) {
+      const categories = await Promise.all(
+        params.category_ids.map(async (id) => {
+          return await Category.findOneOrFail(id);
+        })
+      );
+
+      params = { ...params, ...{ categories } };
+    }
+
     route = Object.assign(route, params);
 
     const errors = await validate(route, {
