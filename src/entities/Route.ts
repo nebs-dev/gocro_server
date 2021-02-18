@@ -40,6 +40,7 @@ export interface IRoute {
   experience: bigint;
   note: string;
   active: Boolean;
+  featured: Boolean;
   location: Location;
   categories: Category[];
   client: Client;
@@ -176,6 +177,10 @@ export class Route extends BaseEntity implements IRoute {
 
   @Column("tinyint", { default: 1 })
   active: boolean;
+
+  @Field(() => Boolean)
+  @Column("tinyint", { default: 0 })
+  featured: boolean;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

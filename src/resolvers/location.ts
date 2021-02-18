@@ -1,7 +1,7 @@
 import { Location, locationRelations } from "@entities/Location";
 import { paginate } from "@services/paginatorService";
+import { LocationArgs } from "@shared/arguments";
 import { forbiddenErr } from "@shared/constants";
-import { LocationArgs } from "@shared/inputs";
 import { LocationPaginatorResponse } from "@shared/responses";
 import { MyContext, PaginatorResponseType } from "@shared/types";
 import {

@@ -41,23 +41,25 @@ export const addFilters = (
   filters: IFilter,
   relations: Array<string>
 ): SelectQueryBuilder<BaseEntity> => {
-  Object.entries(filters).forEach(([key, value]) => {
-    const name = relations.includes(key) ? `${key}.id` : `${qb.alias}.${key}`;
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      const name = relations.includes(key) ? `${key}.id` : `${qb.alias}.${key}`;
 
-    if (Array.isArray(value)) {
-      qb.where(name + " IN (:ids)", { ids: value });
-    } else {
-      const isString = typeof value === "string";
-      const firstChar = isString ? value.charAt(0) : null;
-      const lastChar = isString ? value.charAt(value.length - 1) : null;
-
-      if (firstChar === "%" || lastChar === "%") {
-        qb.where(name + " LIKE :value", { value: value });
+      if (Array.isArray(value)) {
+        qb.where(name + " IN (:ids)", { ids: value });
       } else {
-        qb.where(name + " = :value", { value });
+        const isString = typeof value === "string";
+        const firstChar = isString ? value.charAt(0) : null;
+        const lastChar = isString ? value.charAt(value.length - 1) : null;
+
+        if (firstChar === "%" || lastChar === "%") {
+          qb.where(name + " LIKE :value", { value: value });
+        } else {
+          qb.where(name + " = :value", { value });
+        }
       }
-    }
-  });
+    });
+  }
 
   return qb;
 };

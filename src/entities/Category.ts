@@ -22,6 +22,8 @@ export interface ICategory {
   updated_at: Date;
 }
 
+export const categoryRelations = ["events", "routes"];
+
 @ObjectType()
 @Entity("categories")
 export class Category extends BaseEntity implements ICategory {

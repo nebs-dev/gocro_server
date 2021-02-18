@@ -21,6 +21,8 @@ export interface IClient {
   updated_at: Date;
 }
 
+export const clientRelations = ["routes"];
+
 @ObjectType()
 @Entity("clients")
 export class Client extends BaseEntity implements IClient {

@@ -28,33 +28,45 @@ export class PaginatorDataInput {
 }
 
 @InputType()
-class RouteFilterInput implements IFilter {
+export class RouteFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   location: number;
   @Field(() => [Int], { nullable: true })
   categories: Array<number>;
   @Field(() => String, { nullable: true })
   title: string;
+  @Field(() => Boolean, { nullable: true })
+  featured: Boolean;
 }
 
 @InputType()
-class LocationFilterInput implements IFilter {
+export class LocationFilterInput implements IFilter {
   @Field(() => String, { nullable: true })
   title: string;
 }
 
-@ArgsType()
-export class RouteListArgs {
-  @Field(() => RouteFilterInput, { nullable: true })
-  filters: RouteFilterInput;
-  @Field(() => PaginationClientInput, { nullable: true })
-  pagination: PaginationClientInput;
+@InputType()
+export class CategoryFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
 }
 
-@ArgsType()
-export class LocationArgs {
-  @Field(() => LocationFilterInput, { nullable: true })
-  filters: LocationFilterInput;
-  @Field(() => PaginationClientInput, { nullable: true })
-  pagination: PaginationClientInput;
+@InputType()
+export class ClientFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  name: string;
+  @Field(() => String, { nullable: true })
+  email: string;
+}
+
+@InputType()
+export class EventFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  location: number;
+  @Field(() => Int, { nullable: true })
+  category: number;
 }

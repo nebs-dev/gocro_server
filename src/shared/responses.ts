@@ -1,3 +1,6 @@
+import { Category } from "@entities/Category";
+import { Client } from "@entities/Client";
+import { Event } from "@entities/Event";
 import { Location } from "@entities/Location";
 import { Route } from "@entities/Route";
 import { Field, Int, ObjectType } from "type-graphql";
@@ -31,5 +34,29 @@ export class RoutePaginatorResponse {
   @Field(() => [Route])
   data: Route[];
   @Field(() => PaginatorData, { nullable: true })
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class CategoryPaginatorResponse {
+  @Field(() => [Category])
+  data: Category[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class ClientPaginatorResponse {
+  @Field(() => [Client])
+  data: Client[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class EventPaginatorResponse {
+  @Field(() => [Event])
+  data: Event[];
+  @Field(() => PaginatorData)
   pagination: PaginatorData;
 }

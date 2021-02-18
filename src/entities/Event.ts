@@ -32,6 +32,8 @@ export interface IEvent {
   updated_at: Date;
 }
 
+export const eventRelations = ["category", "location", "prices"];
+
 @ObjectType()
 @Entity("events")
 export class Event extends BaseEntity implements IEvent {
