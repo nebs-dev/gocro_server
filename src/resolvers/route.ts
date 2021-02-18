@@ -21,10 +21,10 @@ import {
 
 import { RouteRepository } from "@entities/repositories/RouteRepository";
 import { getCustomRepository } from "typeorm";
-import { RouteListArgs } from "@shared/inputs";
 import { RoutePaginatorResponse } from "@shared/responses";
 import { Category } from "@entities/Category";
 import { forbiddenErr } from "@shared/constants";
+import { RouteListArgs } from "@shared/arguments";
 
 @InputType()
 class RouteCreateInput {
@@ -40,6 +40,8 @@ class RouteCreateInput {
   experience: bigint;
   @Field({ nullable: true })
   note: string;
+  @Field({ nullable: true })
+  featured: Boolean;
   @Field(() => Int)
   location_id: number;
   @Field(() => [Int], { nullable: true })
@@ -60,6 +62,8 @@ class RouteUpdateInput {
   experience: bigint;
   @Field(() => String, { nullable: true })
   note: string;
+  @Field({ nullable: true })
+  featured: Boolean;
   @Field(() => Int, { nullable: true })
   location_id: number;
   @Field(() => [Int], { nullable: true })

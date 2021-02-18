@@ -1,8 +1,12 @@
 import { Category } from "@entities/Category";
-import { Event } from "@entities/Event";
+import { Event, eventRelations } from "@entities/Event";
 import { Location } from "@entities/Location";
+import { EventRepository } from "@entities/repositories/EventRepository";
+import { paginate } from "@services/paginatorService";
+import { EventArgs } from "@shared/arguments";
 import { forbiddenErr } from "@shared/constants";
-import { MyContext } from "@shared/types";
+import { EventPaginatorResponse } from "@shared/responses";
+import { MyContext, PaginatorResponseType } from "@shared/types";
 import {
   ApolloError,
   ForbiddenError,
@@ -12,6 +16,7 @@ import { NumberAttributeValue } from "aws-sdk/clients/dynamodbstreams";
 import { validate } from "class-validator";
 import {
   Arg,
+  Args,
   Ctx,
   Field,
   InputType,
@@ -20,6 +25,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import { getCustomRepository } from "typeorm";
 
 @InputType()
 class EventCreateInput {
@@ -47,9 +53,12 @@ class EventUpdateInput {
 
 @Resolver()
 export class EventResolver {
-  @Query(() => [Event])
-  async events(): Promise<Event[]> {
-    return await Event.find({ relations: ["category", "location"] });
+  @Query(() => EventPaginatorResponse)
+  async events(
+    @Args() { filters, pagination }: EventArgs
+  ): Promise<PaginatorResponseType> {
+    const routeRepository = getCustomRepository(EventRepository);
+    return await routeRepository.search(filters, pagination);
   }
 
   @Query(() => Event)

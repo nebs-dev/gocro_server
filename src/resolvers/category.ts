@@ -1,6 +1,7 @@
-import { Category } from "@entities/Category";
-import { MyContext } from "@shared/types";
+import { Category, categoryRelations } from "@entities/Category";
+import { MyContext, PaginatorResponseType } from "@shared/types";
 import { forbiddenErr } from "@shared/constants";
+import { CategoryPaginatorResponse } from "@shared/responses";
 import {
   ApolloError,
   ForbiddenError,
@@ -9,6 +10,7 @@ import {
 import { validate } from "class-validator";
 import {
   Arg,
+  Args,
   Ctx,
   Field,
   InputType,
@@ -16,6 +18,8 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import { paginate } from "@services/paginatorService";
+import { CategoryArgs } from "@shared/arguments";
 
 @InputType()
 class CategoryCreateInput {
@@ -31,9 +35,11 @@ class CategoryUpdateInput {
 
 @Resolver()
 export class CategoryResolver {
-  @Query(() => [Category])
-  async categories(): Promise<Category[]> {
-    return await Category.find({ relations: ["routes"] });
+  @Query(() => CategoryPaginatorResponse)
+  async categories(
+    @Args() { filters, pagination }: CategoryArgs
+  ): Promise<PaginatorResponseType> {
+    return await paginate(Category, categoryRelations, filters, pagination);
   }
 
   @Query(() => Category)

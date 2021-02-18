@@ -1,6 +1,9 @@
-import { Client } from "@entities/Client";
+import { Client, clientRelations } from "@entities/Client";
+import { paginate } from "@services/paginatorService";
+import { ClientArgs } from "@shared/arguments";
 import { forbiddenErr } from "@shared/constants";
-import { MyContext } from "@shared/types";
+import { ClientPaginatorResponse } from "@shared/responses";
+import { MyContext, PaginatorResponseType } from "@shared/types";
 import {
   ApolloError,
   ForbiddenError,
@@ -9,6 +12,7 @@ import {
 import { validate } from "class-validator";
 import {
   Arg,
+  Args,
   Ctx,
   Field,
   InputType,
@@ -39,9 +43,11 @@ class ClientUpdateInput {
 
 @Resolver()
 export class ClientResolver {
-  @Query(() => [Client])
-  async clients(): Promise<Client[]> {
-    return await Client.find({ relations: ["routes", "routes.location"] });
+  @Query(() => ClientPaginatorResponse)
+  async clients(
+    @Args() { filters, pagination }: ClientArgs
+  ): Promise<PaginatorResponseType> {
+    return await paginate(Client, clientRelations, filters, pagination);
   }
 
   @Query(() => Client)
