@@ -1,5 +1,6 @@
 import { GuidedInfo } from "@entities/GuidedInfo";
 import { Route } from "@entities/Route";
+import { forbiddenErr } from "@shared/constants";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -69,7 +70,7 @@ export class GuidedInfoResolver {
     @Ctx() context: MyContext
   ): Promise<GuidedInfo> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let guidedInfo = new GuidedInfo();
@@ -105,7 +106,7 @@ export class GuidedInfoResolver {
     @Ctx() context: MyContext
   ): Promise<GuidedInfo> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let guidedInfo = await GuidedInfo.findOneOrFail({ id });
@@ -139,7 +140,7 @@ export class GuidedInfoResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let guidedInfo = await GuidedInfo.findOneOrFail({ id });

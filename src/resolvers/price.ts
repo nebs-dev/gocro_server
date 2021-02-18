@@ -1,6 +1,7 @@
 import { Event } from "@entities/Event";
 import { Price } from "@entities/Price";
 import { Route } from "@entities/Route";
+import { forbiddenErr } from "@shared/constants";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -67,7 +68,7 @@ export class PriceResolver {
     @Ctx() context: MyContext
   ): Promise<Price> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let price = new Price();
@@ -115,7 +116,7 @@ export class PriceResolver {
     @Ctx() context: MyContext
   ): Promise<Price> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let price = await Price.findOneOrFail(id);
@@ -145,7 +146,7 @@ export class PriceResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let price = await Price.findOneOrFail(id);

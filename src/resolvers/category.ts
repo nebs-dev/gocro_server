@@ -1,5 +1,6 @@
 import { Category } from "@entities/Category";
 import { MyContext } from "@shared/types";
+import { forbiddenErr } from "@shared/constants";
 import {
   ApolloError,
   ForbiddenError,
@@ -46,7 +47,7 @@ export class CategoryResolver {
     @Ctx() context: MyContext
   ): Promise<Category> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let category = new Category();
@@ -78,7 +79,7 @@ export class CategoryResolver {
     @Ctx() context: MyContext
   ): Promise<Category> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let category = await Category.findOneOrFail(id);

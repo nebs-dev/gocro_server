@@ -6,6 +6,7 @@ export const paramMissingError =
   "One or more of the required parameters was missing.";
 export const loginFailedErr = "Login failed";
 export const internalServerErr = "Internal Server Error";
+export const forbiddenErr = "You are not allowed to access.";
 
 // Numbers
 export const pwdSaltRounds = 12;

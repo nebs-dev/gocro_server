@@ -1,4 +1,5 @@
 import { Client } from "@entities/Client";
+import { forbiddenErr } from "@shared/constants";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -54,7 +55,7 @@ export class ClientResolver {
     @Ctx() context: MyContext
   ): Promise<Client> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let client = new Client();
@@ -86,7 +87,7 @@ export class ClientResolver {
     @Ctx() context: MyContext
   ): Promise<Client> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let client = await Client.findOneOrFail(id);
@@ -116,7 +117,7 @@ export class ClientResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let client = await Client.findOneOrFail({ id });

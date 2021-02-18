@@ -1,6 +1,7 @@
 import { Category } from "@entities/Category";
 import { Event } from "@entities/Event";
 import { Location } from "@entities/Location";
+import { forbiddenErr } from "@shared/constants";
 import { MyContext } from "@shared/types";
 import {
   ApolloError,
@@ -62,7 +63,7 @@ export class EventResolver {
     @Ctx() context: MyContext
   ): Promise<Event> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let event = new Event();
@@ -100,7 +101,7 @@ export class EventResolver {
     @Ctx() context: MyContext
   ): Promise<Event> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let event = await Event.findOneOrFail(id, {
@@ -145,7 +146,7 @@ export class EventResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let event = await Event.findOneOrFail({ id });

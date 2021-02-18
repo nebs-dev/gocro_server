@@ -23,6 +23,8 @@ import { RouteRepository } from "@entities/repositories/RouteRepository";
 import { getCustomRepository } from "typeorm";
 import { RouteListArgs } from "@shared/inputs";
 import { RoutePaginatorResponse } from "@shared/responses";
+import { Category } from "@entities/Category";
+import { forbiddenErr } from "@shared/constants";
 
 @InputType()
 class RouteCreateInput {
@@ -40,8 +42,8 @@ class RouteCreateInput {
   note: string;
   @Field(() => Int)
   location_id: number;
-  @Field(() => Int, { nullable: true })
-  category_id: number;
+  @Field(() => [Int], { nullable: true })
+  category_ids: Array<number>;
 }
 
 @InputType()
@@ -60,8 +62,8 @@ class RouteUpdateInput {
   note: string;
   @Field(() => Int, { nullable: true })
   location_id: number;
-  @Field(() => Int, { nullable: true })
-  category_id: number;
+  @Field(() => [Int], { nullable: true })
+  category_ids: Array<number>;
 }
 
 @Resolver()
@@ -87,7 +89,7 @@ export class RouteResolver {
     @Ctx() context: MyContext
   ): Promise<Route> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let route = new Route();
@@ -95,6 +97,17 @@ export class RouteResolver {
 
     const location = await Location.findOneOrFail({ id: location_id });
     params = { ...params, ...{ location } };
+
+    if (params.category_ids && params.category_ids.length > 0) {
+      const categories = await Promise.all(
+        params.category_ids.map(async (id) => {
+          return await Category.findOneOrFail(id);
+        })
+      );
+
+      params = { ...params, ...{ categories } };
+    }
+
     route = Object.assign(route, params);
 
     const errors = await validate(route, {
@@ -123,7 +136,7 @@ export class RouteResolver {
     @Ctx() context: MyContext
   ): Promise<Route> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let route = await Route.findOneOrFail(id);
@@ -160,7 +173,7 @@ export class RouteResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let route = await Route.findOneOrFail({ id });

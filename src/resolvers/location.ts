@@ -1,5 +1,6 @@
 import { Location, locationRelations } from "@entities/Location";
 import { paginate } from "@services/paginatorService";
+import { forbiddenErr } from "@shared/constants";
 import { LocationArgs } from "@shared/inputs";
 import { LocationPaginatorResponse } from "@shared/responses";
 import { MyContext, PaginatorResponseType } from "@shared/types";
@@ -56,7 +57,7 @@ export class LocationResolver {
     @Ctx() context: MyContext
   ): Promise<Location> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let location = new Location();
@@ -88,7 +89,7 @@ export class LocationResolver {
     @Ctx() context: MyContext
   ): Promise<Location> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let location = await Location.findOneOrFail(id);
@@ -118,7 +119,7 @@ export class LocationResolver {
     @Ctx() context: MyContext
   ): Promise<boolean> {
     if (!context.isAdmin) {
-      throw new ForbiddenError("You are not allowed to access this.");
+      throw new ForbiddenError(forbiddenErr);
     }
 
     let location = await Location.findOneOrFail({ id });
