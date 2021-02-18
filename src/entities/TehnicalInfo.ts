@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -12,10 +13,10 @@ import { Route } from "./Route";
 
 export interface ITehnicalInfo {
   id: bigint;
-  elevation_min: bigint;
-  elevation_max: bigint;
-  length: bigint;
-  duration: bigint;
+  elevation_min: number;
+  elevation_max: number;
+  length: number;
+  duration: number;
   created_at: Date;
   updated_at: Date;
 }
@@ -27,25 +28,30 @@ export class TehnicalInfo extends BaseEntity implements ITehnicalInfo {
   @PrimaryGeneratedColumn()
   id: bigint;
 
-  @Field(() => Int, { nullable: true })
-  @Column("integer", { nullable: true })
-  @IsOptional()
-  elevation_min: bigint;
+  @OneToOne(() => Route, (route) => route.tehnical_info, {
+    onDelete: "CASCADE",
+  })
+  route: Route;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  elevation_max: bigint;
+  elevation_min: number;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  length: bigint;
+  elevation_max: number;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  duration: bigint;
+  length: number;
+
+  @Field(() => Int, { nullable: true })
+  @Column("integer", { nullable: true })
+  @IsOptional()
+  duration: number;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

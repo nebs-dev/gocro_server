@@ -36,8 +36,8 @@ export interface IRoute {
   description: string;
   details: string;
   average_rate: number;
-  fitness_level: bigint;
-  experience: bigint;
+  fitness_level: number;
+  experience: number;
   note: string;
   active: Boolean;
   featured: Boolean;
@@ -162,13 +162,13 @@ export class Route extends BaseEntity implements IRoute {
   @Column("integer", { nullable: true })
   @IsOptional()
   @Max(5, { always: true })
-  fitness_level: bigint;
+  fitness_level: number;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
   @Max(5, { always: true })
-  experience: bigint;
+  experience: number;
 
   @Field(() => String, { nullable: true })
   @Column("longtext", { nullable: true })

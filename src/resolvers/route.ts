@@ -35,9 +35,9 @@ class RouteCreateInput {
   @Field(() => String)
   details: string;
   @Field(() => Int, { nullable: true })
-  fitness_level: bigint;
+  fitness_level: number;
   @Field(() => Int, { nullable: true })
-  experience: bigint;
+  experience: number;
   @Field({ nullable: true })
   note: string;
   @Field({ nullable: true })
@@ -57,9 +57,9 @@ class RouteUpdateInput {
   @Field(() => String, { nullable: true })
   details: string;
   @Field(() => Int, { nullable: true })
-  fitness_level: bigint;
+  fitness_level: number;
   @Field(() => Int, { nullable: true })
-  experience: bigint;
+  experience: number;
   @Field(() => String, { nullable: true })
   note: string;
   @Field({ nullable: true })
