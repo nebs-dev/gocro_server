@@ -22,15 +22,15 @@ import {
 @InputType()
 class GuidedInfoInput {
   @Field(() => Int, { nullable: true })
-  age_min: bigint;
+  age_min: number;
   @Field(() => Int, { nullable: true })
-  age_max: bigint;
+  age_max: number;
   @Field(() => String, { nullable: true })
   starts_from: string;
   @Field(() => Int, { nullable: true })
-  people_min: bigint;
+  people_min: number;
   @Field(() => Int, { nullable: true })
-  people_max: bigint;
+  people_max: number;
   @Field(() => String, { nullable: true })
   accommodation: string;
   @Field(() => String, { nullable: true })

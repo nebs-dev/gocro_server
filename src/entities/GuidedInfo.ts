@@ -13,11 +13,11 @@ import { Route } from "./Route";
 
 export interface IGuidedInfo {
   id: number;
-  age_min: bigint;
-  age_max: bigint;
+  age_min: number;
+  age_max: number;
   starts_from: string;
-  people_min: bigint;
-  people_max: bigint;
+  people_min: number;
+  people_max: number;
   accommodation: string;
   meals: string;
   transfer: string;
@@ -48,12 +48,12 @@ export class GuidedInfo extends BaseEntity implements IGuidedInfo {
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  age_min: bigint;
+  age_min: number;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  age_max: bigint;
+  age_max: number;
 
   @Field(() => String)
   @Column({
@@ -67,12 +67,12 @@ export class GuidedInfo extends BaseEntity implements IGuidedInfo {
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  people_min: bigint;
+  people_min: number;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })
   @IsOptional()
-  people_max: bigint;
+  people_max: number;
 
   @Field(() => String, { nullable: true })
   @Column("longtext", { nullable: true })

@@ -1,6 +1,5 @@
 import morgan from "morgan";
 import helmet from "helmet";
-import StatusCodes from "http-status-codes";
 import express from "express";
 
 import "express-async-errors";
@@ -12,6 +11,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import fileUpload from "express-fileupload";
 import cors from "cors";
+
 import { pagination } from "typeorm-pagination";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -26,6 +26,7 @@ import { ClientResolver } from "@resolvers/client";
 import { GuidedInfoResolver } from "@resolvers/guidedInfo";
 import { PriceResolver } from "@resolvers/price";
 import { EventResolver } from "@resolvers/event";
+import fake from "./utils/faker";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -101,6 +102,11 @@ createConnection({
     // Security
     if (process.env.NODE_ENV === "production") {
       app.use(helmet());
+    }
+
+    var argv = require("minimist")(process.argv.slice(2));
+    if (argv.fake && argv.fake === "true") {
+      fake();
     }
   })
   .catch((error) => console.log(error));

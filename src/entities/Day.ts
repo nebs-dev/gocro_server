@@ -31,7 +31,7 @@ export class Day extends BaseEntity implements IDay {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => [Route])
+  @Field(() => Route)
   @ManyToOne(() => Route, (route: Route) => route.days)
   @JoinColumn({ name: "route_id" })
   @IsDefined({ always: true })
