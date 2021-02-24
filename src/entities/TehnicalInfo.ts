@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Day } from "./Day";
 import { Route } from "./Route";
 
 export interface ITehnicalInfo {
@@ -32,6 +33,11 @@ export class TehnicalInfo extends BaseEntity implements ITehnicalInfo {
     onDelete: "CASCADE",
   })
   route: Route;
+
+  @OneToOne(() => Day, (day) => day.tehnical_info, {
+    onDelete: "CASCADE",
+  })
+  day: Day;
 
   @Field(() => Int, { nullable: true })
   @Column("integer", { nullable: true })

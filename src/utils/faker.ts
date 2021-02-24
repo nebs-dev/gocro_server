@@ -6,14 +6,16 @@ import { Client } from "@entities/Client";
 import { Event } from "@entities/Event";
 import { GuidedInfo } from "@entities/GuidedInfo";
 import { TehnicalInfo } from "@entities/TehnicalInfo";
+import { Day } from "@entities/Day";
+import { Unique } from "typeorm";
 
 let category_ids: Array<number> = [];
 let location_ids: Array<number> = [];
 let client_ids: Array<number> = [];
 
 export default async () => {
-  // await generateCategories();
-  // await generateLocations();
+  await generateCategories();
+  await generateLocations();
   await generateClients();
   await generateEvents();
   await generateRoutes();
@@ -24,22 +26,19 @@ const getRandomId = (array: Array<number>) => {
 };
 
 const generateCategories = async () => {
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 10; i++) {
     const category = Category.create({
       title: faker.commerce.productName(),
     });
 
     category.save();
   }
-
-  const categories = await Category.find({ select: ["id"] });
-  category_ids = categories.map((c) => c.id);
 };
 
 const generateLocations = async () => {
   for (let i = 0; i < 10; i++) {
     const location = Location.create({
-      title: faker.address.county(),
+      title: faker.random.word(),
       description: faker.lorem.words(),
     });
 
@@ -104,7 +103,29 @@ const generateRoutes = async () => {
     try {
       const response = await route.save();
       generateGuidedInfo(response);
-      generateTehnicalInfo(response);
+
+      if (i % 2 === 0) {
+        generateDays(response);
+      } else {
+        generateTehnicalInfo(response);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+};
+
+const generateDays = async (route: Route) => {
+  for (let i = 0; i < 4; i++) {
+    const day = Day.create({
+      title: faker.lorem.words(),
+      text: faker.lorem.paragraph(),
+      route,
+    });
+
+    try {
+      const response = await day.save();
+      generateTehnicalInfo(undefined, response);
     } catch (e) {
       console.log(e);
     }
@@ -135,13 +156,17 @@ const generateGuidedInfo = async (route: Route) => {
   gi.save();
 };
 
-const generateTehnicalInfo = async (route: Route) => {
+const generateTehnicalInfo = async (
+  route?: Route | undefined,
+  day?: Day | undefined
+) => {
   const ti = TehnicalInfo.create({
     elevation_min: faker.random.number(10),
     elevation_max: faker.random.number(3000),
     length: faker.random.number(10000),
     duration: faker.random.number(600),
     route,
+    day,
   });
 
   try {
