@@ -7,7 +7,6 @@ import { Event } from "@entities/Event";
 import { GuidedInfo } from "@entities/GuidedInfo";
 import { TehnicalInfo } from "@entities/TehnicalInfo";
 import { Day } from "@entities/Day";
-import { Unique } from "typeorm";
 
 let category_ids: Array<number> = [];
 let location_ids: Array<number> = [];
