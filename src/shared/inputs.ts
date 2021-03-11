@@ -70,3 +70,13 @@ export class EventFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   category: number;
 }
+
+@InputType()
+export class ReviewFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  rate: number;
+}

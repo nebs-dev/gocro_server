@@ -1,9 +1,14 @@
-import { IsDefined, IsNotEmpty, IsOptional, Length, MinLength, ValidateNested } from "class-validator";
+import { 
+  IsDefined, 
+  IsNotEmpty, 
+  IsOptional, 
+  Length,
+} from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
+  CreateDateColumn,  
   Entity,
   JoinColumn,
   ManyToOne,
@@ -24,6 +29,10 @@ export interface IReview {
   updated_at: Date;
 }
 
+export const reviewRelations = ["user", "route"];
+
+@ObjectType()
+@Entity("reviews")
 export class Review extends BaseEntity implements IReview {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
