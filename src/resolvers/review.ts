@@ -1,5 +1,6 @@
 import { Review, reviewRelations } from "@entities/Review";
 import { Route } from "@entities/Route";
+import { User } from "@entities/User";
 import { paginate } from "@services/paginatorService";
 import { ReviewArgs } from "@shared/arguments";
 import { forbiddenErr } from "@shared/constants";
@@ -46,7 +47,7 @@ class ReviewUpdateInput {
 }
 
 @Resolver()
-export class LocationResolver {
+export class ReviewResolver {
   @Query(() => ReviewPaginatorResponse)
   async reviews(
     @Args() { filters, pagination }: ReviewArgs
@@ -70,7 +71,7 @@ export class LocationResolver {
 
     const { route_id } = params;
     
-    const user = context.tokenData?.user;
+    const user = await User.findOne(context.tokenData?.user.id);
     if (!user) {
       throw new UserInputError("User doesn't exist");
     }
@@ -82,8 +83,6 @@ export class LocationResolver {
 
     params = { ...params, ...{ route }, ...{user} };
     
-    context.tokenData?.user.id
-
     let review = new Review();
     review = Object.assign(review, params);    
 
@@ -112,16 +111,11 @@ export class LocationResolver {
     @Arg("params") params: ReviewUpdateInput,
     @Ctx() context: MyContext
   ): Promise<Review> {
-    if (!context.loggedIn) {
+    if (!context.isAdmin) {
       throw new ForbiddenError(forbiddenErr);
     }
 
     let review = await Review.findOneOrFail(id);
-
-    if (review.user.id != context.tokenData?.user.id) {
-      throw new ForbiddenError(forbiddenErr);
-    }
-
     review = Object.assign(review, params);
 
     const errors = await validate(review, {
@@ -147,15 +141,11 @@ export class LocationResolver {
     @Arg("id") id: number,
     @Ctx() context: MyContext
   ): Promise<boolean> {
-    if (!context.loggedIn) {
+    if (!context.isAdmin) {
       throw new ForbiddenError(forbiddenErr);
     }
 
     let review = await Review.findOneOrFail(id);
-
-    if (!context.isAdmin && review.user.id != context.tokenData?.user.id) {
-      throw new ForbiddenError(forbiddenErr);
-    }
 
     try {
       await review.remove();

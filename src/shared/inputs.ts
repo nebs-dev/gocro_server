@@ -1,3 +1,4 @@
+import { Route } from "@entities/Route";
 import { ArgsType, Field, InputType, Int } from "type-graphql";
 import { BaseEntity } from "typeorm";
 
@@ -79,4 +80,8 @@ export class ReviewFilterInput implements IFilter {
   text: string;
   @Field(() => Int, { nullable: true })
   rate: number;
+  @Field(() => Int, { nullable: true })
+  user_id: number;
+  @Field(() => Int, { nullable: true })
+  route_id: number;
 }

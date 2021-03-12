@@ -60,6 +60,14 @@ export class Review extends BaseEntity implements IReview {
   @Column("integer", { nullable: false })
   rate: number;
 
+  @Field(() => Int)
+  @Column("integer", { nullable: false })
+  user_id: number
+
+  @Field(() => Int)
+  @Column("integer", { nullable: false })
+  route_id: number
+
   @Field(() => User)
   @ManyToOne(() => User, (user: User) => user.reviews)
   @JoinColumn({ name: "user_id" })
@@ -68,9 +76,9 @@ export class Review extends BaseEntity implements IReview {
 
   @Field(() => Route)
   @ManyToOne(() => Route, (route: Route) => route.reviews)
-  @JoinColumn({ name: "route_id" })
+  @JoinColumn({ name: "route_id"})
   @IsDefined({ always: true })
-  route: Route;
+  route: Route; 
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
