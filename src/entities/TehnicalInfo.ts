@@ -22,6 +22,8 @@ export interface ITehnicalInfo {
   updated_at: Date;
 }
 
+export const tehnicalInfoRelations = ["route, day"];
+
 @ObjectType()
 @Entity("tehnical_info")
 export class TehnicalInfo extends BaseEntity implements ITehnicalInfo {

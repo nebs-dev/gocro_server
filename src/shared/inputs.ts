@@ -70,3 +70,15 @@ export class EventFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   category: number;
 }
+
+@InputType()
+export class TehnicalInfoFilterInput implements IFilter {
+  @Field(() => Int, { nullable: true })
+  elevation_min: number;
+  @Field(() => Int, { nullable: true })
+  elevation_max: number;
+  @Field(() => Int, { nullable: true })
+  length: number;
+  @Field(() => Int, { nullable: true })
+  duration: number;
+}
