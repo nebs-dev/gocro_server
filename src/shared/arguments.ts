@@ -51,7 +51,7 @@ export class EventArgs {
 
 @ArgsType()
 export class TehnicalInfoArgs {
-  @Field(() => EventFilterInput, { nullable: true })
+  @Field(() => TehnicalInfoFilterInput, { nullable: true })
   filters: TehnicalInfoFilterInput;
   @Field(() => PaginationClientInput, { nullable: true })
   pagination: PaginationClientInput;

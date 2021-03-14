@@ -1,3 +1,5 @@
+import { Day } from "@entities/Day";
+import { Route } from "@entities/Route";
 import { ArgsType, Field, InputType, Int } from "type-graphql";
 import { BaseEntity } from "typeorm";
 
@@ -81,4 +83,8 @@ export class TehnicalInfoFilterInput implements IFilter {
   length: number;
   @Field(() => Int, { nullable: true })
   duration: number;
+  @Field(() => Int, { nullable: true })
+  route_id?: number;
+  @Field(() => Int, { nullable: true })
+  day_id?: number;
 }

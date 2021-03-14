@@ -4,6 +4,7 @@ import { TehnicalInfo, tehnicalInfoRelations } from "@entities/TehnicalInfo";
 import { paginate } from "@services/paginatorService";
 import { TehnicalInfoArgs } from "@shared/arguments";
 import { forbiddenErr } from "@shared/constants";
+import { TehnicalInfoRepository } from "@entities/repositories/TehnicalInfoRepository";
 import { TehnicalInfoPaginatorResponse } from "@shared/responses";
 import { MyContext, PaginatorResponseType } from "@shared/types";
 import {
@@ -23,6 +24,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import { getCustomRepository } from "typeorm";
 
 @InputType()
 class TehnicalInfoInput {
@@ -46,12 +48,8 @@ export class TehnicalInfoResolver {
   async tehnicalInfos(
     @Args() { filters, pagination }: TehnicalInfoArgs
   ): Promise<PaginatorResponseType> {
-    return await paginate(
-      TehnicalInfo,
-      tehnicalInfoRelations,
-      filters,
-      pagination
-    );
+    const tehnicalInfoRepository = getCustomRepository(TehnicalInfoRepository);
+    return tehnicalInfoRepository.search(filters, pagination);
   }
 
   @Query(() => TehnicalInfo)
