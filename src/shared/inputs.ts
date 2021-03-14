@@ -70,3 +70,15 @@ export class EventFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   category: number;
 }
+
+@InputType()
+export class DayFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  route_id: number;
+  @Field(() => Int, { nullable: true })
+  tehnical_info_id: number;
+}

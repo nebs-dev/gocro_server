@@ -16,6 +16,8 @@ import { TehnicalInfo } from "./TehnicalInfo";
 
 export interface IDay {
   id: number;
+  route_id: number;
+  tehnical_info_id: number;
   title: string;
   text: string;
   route: Route;
@@ -23,6 +25,8 @@ export interface IDay {
   created_at: Date;
   updated_at: Date;
 }
+
+export const dayRelations = ["route", "tehnical_info"];
 
 @ObjectType()
 @Entity("days")
@@ -62,6 +66,14 @@ export class Day extends BaseEntity implements IDay {
     groups: ["create"],
   })
   text: string;
+
+  @Field(() => Int)
+  @Column("integer", { nullable: false })
+  route_id: number;
+
+  @Field(() => Int)
+  @Column("integer", { nullable: true })
+  tehnical_info_id: number;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
