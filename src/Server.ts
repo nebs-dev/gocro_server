@@ -27,6 +27,7 @@ import { GuidedInfoResolver } from "@resolvers/guidedInfo";
 import { PriceResolver } from "@resolvers/price";
 import { EventResolver } from "@resolvers/event";
 import fake from "./utils/faker";
+import { TehnicalInfoResolver } from "@resolvers/tehnicalInfo";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -57,6 +58,7 @@ createConnection({
           GuidedInfoResolver,
           PriceResolver,
           EventResolver,
+          TehnicalInfoResolver
         ],
         validate: false,
       }),

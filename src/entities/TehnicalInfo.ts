@@ -18,6 +18,8 @@ export interface ITehnicalInfo {
   elevation_max: number;
   length: number;
   duration: number;
+  day: Day;
+  route: Route;
   created_at: Date;
   updated_at: Date;
 }

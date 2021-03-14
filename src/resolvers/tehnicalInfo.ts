@@ -1,3 +1,5 @@
+import { Day } from "@entities/Day";
+import { Route } from "@entities/Route";
 import { TehnicalInfo, tehnicalInfoRelations } from "@entities/TehnicalInfo";
 import { paginate } from "@services/paginatorService";
 import { TehnicalInfoArgs } from "@shared/arguments";
@@ -33,9 +35,9 @@ class TehnicalInfoInput {
   @Field(() => Int, { nullable: true })
   duration: number;
   @Field(() => Int, { nullable: true })
-  route_id: number;
+  route_id?: number;
   @Field(() => Int, { nullable: true })
-  day_id: number;
+  day_id?: number;
 }
 
 @Resolver()
@@ -44,7 +46,12 @@ export class TehnicalInfoResolver {
   async tehnicalInfos(
     @Args() { filters, pagination }: TehnicalInfoArgs
   ): Promise<PaginatorResponseType> {
-    return await paginate(TehnicalInfo, tehnicalInfoRelations, filters, pagination);
+    return await paginate(
+      TehnicalInfo,
+      tehnicalInfoRelations,
+      filters,
+      pagination
+    );
   }
 
   @Query(() => TehnicalInfo)
@@ -61,15 +68,78 @@ export class TehnicalInfoResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    if ((!params.day_id && !params.route_id) || (params.day_id && params.route_id)) {
-      throw new UserInputError("Invalid tehnical info input. day_id or route_id must be specified");
+    if (
+      (!params.day_id && !params.route_id) ||
+      (params.day_id && params.route_id)
+    ) {
+      throw new UserInputError(
+        "Invalid tehnical info input. day_id or route_id must be specified"
+      );
     }
 
-    let tehnicalInfo = new TehnicalInfo();
+    const tehnicalInfo = new TehnicalInfo();
+    return this.createOrUpdateTehnicalInfo(tehnicalInfo, params);
+  }
+
+  @Mutation(() => TehnicalInfo)
+  async updateTehnicalInfo(
+    @Arg("id") id: number,
+    @Arg("params") params: TehnicalInfoInput,
+    @Ctx() context: MyContext
+  ): Promise<TehnicalInfo> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError(forbiddenErr);
+    }
+
+    if (
+      (!params.day_id && !params.route_id) ||
+      (params.day_id && params.route_id)
+    ) {
+      throw new UserInputError(
+        "Invalid tehnical info input. day_id or route_id must be specified"
+      );
+    }
+
+    const tehnicalInfo = await TehnicalInfo.findOneOrFail(id);
+    return this.createOrUpdateTehnicalInfo(tehnicalInfo, params);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteTehnicalInfo(
+    @Arg("id") id: number,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError(forbiddenErr);
+    }
+
+    const tehnicalInfo = await TehnicalInfo.findOneOrFail(id);
+
+    try {
+      await tehnicalInfo.remove();
+      return true;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  private async createOrUpdateTehnicalInfo(
+    tehnicalInfo: TehnicalInfo,
+    params: TehnicalInfoInput
+  ): Promise<TehnicalInfo> {
+    const { day_id, route_id } = params;
+
+    if (day_id) {
+      const day = await Day.findOneOrFail({ id: day_id });
+      params = { ...params, ...{ day } };
+    } else {
+      const route = await Route.findOneOrFail({ id: route_id });
+      params = { ...params, ...{ route } };
+    }
+
     tehnicalInfo = Object.assign(tehnicalInfo, params);
 
     const errors = await validate(tehnicalInfo, {
-      groups: ["create"],
       forbidUnknownValues: true,
       skipMissingProperties: true,
     });
