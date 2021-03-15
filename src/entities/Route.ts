@@ -28,6 +28,7 @@ import { Day } from "./Day";
 import { GuidedInfo } from "./GuidedInfo";
 import { Location } from "./Location";
 import { Price } from "./Price";
+import { Review } from "./Review";
 import { TehnicalInfo } from "./TehnicalInfo";
 
 export interface IRoute {
@@ -46,6 +47,7 @@ export interface IRoute {
   client: Client;
   days: Day[];
   prices: Price[];
+  reviews: Review[];
   created_at: Date;
   updated_at: Date;
 }
@@ -58,6 +60,7 @@ export const routeRelations = [
   "days.tehnical_info",
   "tehnical_info",
   "guided_info",
+  "reviews"
 ];
 
 @ObjectType()
@@ -106,6 +109,11 @@ export class Route extends BaseEntity implements IRoute {
   @OneToMany(() => Price, (price) => price.route)
   @ValidateNested()
   prices: Price[];
+
+  @Field(() => [Review])
+  @OneToMany(() => Review, (review) => review.route)
+  @ValidateNested()
+  reviews: Review[];
 
   @Field(() => TehnicalInfo, { nullable: true })
   @OneToOne(() => TehnicalInfo)

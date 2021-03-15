@@ -1,3 +1,4 @@
+import { Route } from "@entities/Route";
 import { ArgsType, Field, InputType, Int } from "type-graphql";
 import { BaseEntity } from "typeorm";
 
@@ -71,6 +72,20 @@ export class EventFilterInput implements IFilter {
   category: number;
 }
 
+@InputType()
+export class ReviewFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  rate: number;
+  @Field(() => Int, { nullable: true })
+  user: number;
+  @Field(() => Int, { nullable: true })
+  route: number;
+}
+  
 @InputType()
 export class DayFilterInput implements IFilter {
   @Field(() => String, { nullable: true })

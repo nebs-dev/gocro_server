@@ -3,6 +3,7 @@ import { Client } from "@entities/Client";
 import { Day } from "@entities/Day";
 import { Event } from "@entities/Event";
 import { Location } from "@entities/Location";
+import { Review } from "@entities/Review";
 import { Route } from "@entities/Route";
 import { Field, Int, ObjectType } from "type-graphql";
 
@@ -58,6 +59,14 @@ export class ClientPaginatorResponse {
 export class EventPaginatorResponse {
   @Field(() => [Event])
   data: Event[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class ReviewPaginatorResponse {
+  @Field(() => [Review])
+  data: Review[];
   @Field(() => PaginatorData)
   pagination: PaginatorData;
 }
