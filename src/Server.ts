@@ -27,6 +27,7 @@ import { GuidedInfoResolver } from "@resolvers/guidedInfo";
 import { PriceResolver } from "@resolvers/price";
 import { EventResolver } from "@resolvers/event";
 import { ReviewResolver } from "@resolvers/review";
+import { DayResolver } from "@resolvers/day";
 import fake from "./utils/faker";
 
 /************************************************************************************
@@ -59,6 +60,7 @@ createConnection({
           PriceResolver,
           EventResolver,
           ReviewResolver,
+          DayResolver,
         ],
         validate: false,
       }),

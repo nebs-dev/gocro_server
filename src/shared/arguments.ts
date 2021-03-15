@@ -2,6 +2,7 @@ import { ArgsType, Field } from "type-graphql";
 import {
   CategoryFilterInput,
   ClientFilterInput,
+  DayFilterInput,
   EventFilterInput,
   LocationFilterInput,
   PaginationClientInput,
@@ -53,6 +54,14 @@ export class EventArgs {
 export class ReviewArgs {
   @Field(() => ReviewFilterInput, { nullable: true })
   filters: ReviewFilterInput;
+  @Field(() => PaginationClientInput, { nullable: true })
+  pagination: PaginationClientInput;
+}
+
+@ArgsType()
+export class DayArgs {
+  @Field(() => DayFilterInput, { nullable: true })
+  filters: DayFilterInput;
   @Field(() => PaginationClientInput, { nullable: true })
   pagination: PaginationClientInput;
 }
