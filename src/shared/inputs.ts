@@ -1,6 +1,4 @@
-import { Day } from "@entities/Day";
-import { Route } from "@entities/Route";
-import { ArgsType, Field, InputType, Int } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 import { BaseEntity } from "typeorm";
 
 export interface IFilter {}
@@ -84,7 +82,33 @@ export class TehnicalInfoFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   duration: number;
   @Field(() => Int, { nullable: true })
-  route_id?: number;
+  route: number;
   @Field(() => Int, { nullable: true })
-  day_id?: number;
+  day: number;
+}
+
+@InputType()
+export class ReviewFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  rate: number;
+  @Field(() => Int, { nullable: true })
+  user: number;
+  @Field(() => Int, { nullable: true })
+  route: number;
+}
+
+@InputType()
+export class DayFilterInput implements IFilter {
+  @Field(() => String, { nullable: true })
+  title: string;
+  @Field(() => String, { nullable: true })
+  text: string;
+  @Field(() => Int, { nullable: true })
+  route_id: number;
+  @Field(() => Int, { nullable: true })
+  tehnical_info_id: number;
 }

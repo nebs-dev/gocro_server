@@ -7,11 +7,13 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
-import { Length, IsEmail, IsNotEmpty } from "class-validator";
+import { Length, IsEmail, IsNotEmpty, ValidateNested } from "class-validator";
 import { pwdSaltRounds } from "@shared/constants";
 import bcrypt from "bcrypt";
 import { Field, Int, ObjectType } from "type-graphql";
+import { Review } from "./Review";
 
 export enum UserRoles {
   Admin = 1,
@@ -25,6 +27,7 @@ export interface IUser {
   password: string;
   role: UserRoles;
   active: Boolean;
+  reviews: Review[];
   created_at: Date;
   updated_at: Date;
 }
@@ -92,6 +95,11 @@ export class User extends BaseEntity implements IUser {
   @Field(() => Boolean)
   @Column("tinyint", { default: 0 })
   active: boolean;
+
+  @Field(() => [Review])
+  @OneToMany(() => Review, (review) => review.user)
+  @ValidateNested()
+  reviews: Review[];
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;

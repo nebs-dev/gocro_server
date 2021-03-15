@@ -1,7 +1,9 @@
 import { Category } from "@entities/Category";
 import { Client } from "@entities/Client";
+import { Day } from "@entities/Day";
 import { Event } from "@entities/Event";
 import { Location } from "@entities/Location";
+import { Review } from "@entities/Review";
 import { Route } from "@entities/Route";
 import { TehnicalInfo } from "@entities/TehnicalInfo";
 import { Field, Int, ObjectType } from "type-graphql";
@@ -66,6 +68,22 @@ export class EventPaginatorResponse {
 export class TehnicalInfoPaginatorResponse {
   @Field(() => [TehnicalInfo])
   data: TehnicalInfo[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class ReviewPaginatorResponse {
+  @Field(() => [Review])
+  data: Review[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class DayPaginatorResponse {
+  @Field(() => [Day])
+  data: Day[];
   @Field(() => PaginatorData)
   pagination: PaginatorData;
 }

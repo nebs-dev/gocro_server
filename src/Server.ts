@@ -26,6 +26,8 @@ import { ClientResolver } from "@resolvers/client";
 import { GuidedInfoResolver } from "@resolvers/guidedInfo";
 import { PriceResolver } from "@resolvers/price";
 import { EventResolver } from "@resolvers/event";
+import { ReviewResolver } from "@resolvers/review";
+import { DayResolver } from "@resolvers/day";
 import fake from "./utils/faker";
 import { TehnicalInfoResolver } from "@resolvers/tehnicalInfo";
 
@@ -58,7 +60,9 @@ createConnection({
           GuidedInfoResolver,
           PriceResolver,
           EventResolver,
-          TehnicalInfoResolver
+          TehnicalInfoResolver,
+          ReviewResolver,
+          DayResolver,
         ],
         validate: false,
       }),

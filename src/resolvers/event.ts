@@ -31,7 +31,7 @@ import { getCustomRepository } from "typeorm";
 class EventCreateInput {
   @Field()
   title: string;
-  @Field(() => Int)
+  @Field()
   text: string;
   @Field(() => Int)
   category_id: number;

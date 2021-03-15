@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsDefined, IsNotEmpty, IsOptional, Length } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -7,44 +7,31 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { User } from "./User";
 import { Route } from "./Route";
-import { TehnicalInfo } from "./TehnicalInfo";
 
-export interface IDay {
+export interface IReview {
   id: number;
-  route_id: number;
-  tehnical_info_id: number;
   title: string;
   text: string;
+  rate: number;
+  user: User;
   route: Route;
-  tehnical_info: TehnicalInfo;
   created_at: Date;
   updated_at: Date;
 }
 
-export const dayRelations = ["route", "tehnical_info"];
+export const reviewRelations = ["user", "route"];
 
 @ObjectType()
-@Entity("days")
-export class Day extends BaseEntity implements IDay {
+@Entity("reviews")
+export class Review extends BaseEntity implements IReview {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Field(() => Route)
-  @ManyToOne(() => Route, (route: Route) => route.days)
-  @JoinColumn({ name: "route_id" })
-  @IsDefined({ always: true })
-  route: Route;
-
-  @Field(() => TehnicalInfo, { nullable: true })
-  @OneToOne(() => TehnicalInfo)
-  @JoinColumn({ name: "tehnical_info_id" })
-  tehnical_info: TehnicalInfo;
 
   @Field(() => String)
   @Column({
@@ -61,19 +48,24 @@ export class Day extends BaseEntity implements IDay {
 
   @Field(() => String)
   @Column("longtext")
-  @MinLength(20)
-  @IsNotEmpty({
-    groups: ["create"],
-  })
+  @IsOptional()
   text: string;
 
   @Field(() => Int)
   @Column("integer", { nullable: false })
-  route_id: number;
+  rate: number;
 
-  @Field(() => Int)
-  @Column("integer", { nullable: true })
-  tehnical_info_id: number;
+  @Field(() => User)
+  @ManyToOne(() => User, (user: User) => user.reviews)
+  @JoinColumn({ name: "user_id" })
+  @IsDefined({ always: true })
+  user: User;
+
+  @Field(() => Route)
+  @ManyToOne(() => Route, (route: Route) => route.reviews)
+  @JoinColumn({ name: "route_id" })
+  @IsDefined({ always: true })
+  route: Route;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
