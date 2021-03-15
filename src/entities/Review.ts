@@ -1,14 +1,9 @@
-import { 
-  IsDefined, 
-  IsNotEmpty, 
-  IsOptional, 
-  Length,
-} from "class-validator";
+import { IsDefined, IsNotEmpty, IsOptional, Length } from "class-validator";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,  
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -41,13 +36,13 @@ export class Review extends BaseEntity implements IReview {
   @Field(() => String)
   @Column({
     length: 45,
-    unique: true
+    unique: true,
   })
   @Length(4, 45, {
-    always: true
+    always: true,
   })
   @IsNotEmpty({
-    groups: ["create"]
+    groups: ["create"],
   })
   title: string;
 
@@ -60,14 +55,6 @@ export class Review extends BaseEntity implements IReview {
   @Column("integer", { nullable: false })
   rate: number;
 
-  @Field(() => Int)
-  @Column("integer", { nullable: false })
-  user_id: number
-
-  @Field(() => Int)
-  @Column("integer", { nullable: false })
-  route_id: number
-
   @Field(() => User)
   @ManyToOne(() => User, (user: User) => user.reviews)
   @JoinColumn({ name: "user_id" })
@@ -76,13 +63,13 @@ export class Review extends BaseEntity implements IReview {
 
   @Field(() => Route)
   @ManyToOne(() => Route, (route: Route) => route.reviews)
-  @JoinColumn({ name: "route_id"})
+  @JoinColumn({ name: "route_id" })
   @IsDefined({ always: true })
-  route: Route; 
+  route: Route;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updated_at: Date;  
+  updated_at: Date;
 }

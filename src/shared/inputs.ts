@@ -81,7 +81,7 @@ export class ReviewFilterInput implements IFilter {
   @Field(() => Int, { nullable: true })
   rate: number;
   @Field(() => Int, { nullable: true })
-  user_id: number;
+  user: number;
   @Field(() => Int, { nullable: true })
-  route_id: number;
+  route: number;
 }
