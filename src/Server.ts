@@ -29,6 +29,7 @@ import { EventResolver } from "@resolvers/event";
 import { ReviewResolver } from "@resolvers/review";
 import { DayResolver } from "@resolvers/day";
 import fake from "./utils/faker";
+import { TehnicalInfoResolver } from "@resolvers/tehnicalInfo";
 
 /************************************************************************************
  *                              Set basic express settings
@@ -59,6 +60,7 @@ createConnection({
           GuidedInfoResolver,
           PriceResolver,
           EventResolver,
+          TehnicalInfoResolver,
           ReviewResolver,
           DayResolver,
         ],

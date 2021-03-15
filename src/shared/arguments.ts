@@ -8,6 +8,7 @@ import {
   PaginationClientInput,
   ReviewFilterInput,
   RouteFilterInput,
+  TehnicalInfoFilterInput,
 } from "./inputs";
 
 @ArgsType()
@@ -46,6 +47,14 @@ export class ClientArgs {
 export class EventArgs {
   @Field(() => EventFilterInput, { nullable: true })
   filters: EventFilterInput;
+  @Field(() => PaginationClientInput, { nullable: true })
+  pagination: PaginationClientInput;
+}
+
+@ArgsType()
+export class TehnicalInfoArgs {
+  @Field(() => TehnicalInfoFilterInput, { nullable: true })
+  filters: TehnicalInfoFilterInput;
   @Field(() => PaginationClientInput, { nullable: true })
   pagination: PaginationClientInput;
 }

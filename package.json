@@ -6,6 +6,7 @@
     "lint": "eslint --ext ts,tsx src/*",
     "start": "node -r module-alias/register ./dist --env=production",
     "start:dev": "nodemon",
+    "start:local": "nodemon --env=local",
     "start:fake": "nodemon --fake=true",
     "test": "nodemon --config ./spec/nodemon.json"
   },

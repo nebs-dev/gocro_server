@@ -5,6 +5,7 @@ import { Event } from "@entities/Event";
 import { Location } from "@entities/Location";
 import { Review } from "@entities/Review";
 import { Route } from "@entities/Route";
+import { TehnicalInfo } from "@entities/TehnicalInfo";
 import { Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -59,6 +60,14 @@ export class ClientPaginatorResponse {
 export class EventPaginatorResponse {
   @Field(() => [Event])
   data: Event[];
+  @Field(() => PaginatorData)
+  pagination: PaginatorData;
+}
+
+@ObjectType()
+export class TehnicalInfoPaginatorResponse {
+  @Field(() => [TehnicalInfo])
+  data: TehnicalInfo[];
   @Field(() => PaginatorData)
   pagination: PaginatorData;
 }
