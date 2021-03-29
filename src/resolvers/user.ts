@@ -1,8 +1,31 @@
 import { User } from "@entities/User";
 import { MyContext } from "@shared/types";
-import { Ctx, Query, Resolver } from "type-graphql";
-import { ForbiddenError } from "apollo-server-express";
+import {
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
+import {
+  ApolloError,
+  ForbiddenError,
+  UserInputError,
+} from "apollo-server-express";
 import { forbiddenErr } from "@shared/constants";
+import { validate } from "class-validator";
+
+@InputType()
+class UserInput {
+  @Field(() => String, { nullable: true })
+  username: string;
+  @Field(() => String, { nullable: true })
+  email: string;
+  @Field(() => Boolean, { nullable: true })
+  active: boolean;
+}
 
 @Resolver()
 export class UserResolver {
@@ -12,6 +35,57 @@ export class UserResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    return User.find();
+    return User.find({ where: { is_deleted: false } });
+  }
+
+  @Mutation(() => User)
+  async updateUser(
+    @Arg("id") id: number,
+    @Arg("params") params: UserInput,
+    @Ctx() context: MyContext
+  ): Promise<User> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError(forbiddenErr);
+    }
+
+    let user = await User.findOneOrFail(id);
+    user = Object.assign(user, params);
+
+    const errors = await validate(user, {
+      forbidUnknownValues: true,
+      skipMissingProperties: true,
+    });
+
+    if (errors.length > 0) {
+      throw new UserInputError("Invalid user input", { errors });
+    }
+
+    try {
+      await user.save();
+
+      return user;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUser(
+    @Arg("id") id: number,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!context.isAdmin) {
+      throw new ForbiddenError(forbiddenErr);
+    }
+
+    const user = await User.findOneOrFail(id);
+    user.is_deleted = true;
+
+    try {
+      await user.save();
+      return true;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
   }
 }
