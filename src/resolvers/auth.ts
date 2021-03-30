@@ -51,10 +51,14 @@ const jwtService = new JwtService();
 export class AuthResolver {
   @Mutation(() => AuthReponse)
   async login(@Arg("params") params: EmailPasswordInput): Promise<AuthReponse> {
-    const user = await User.findOne({ email: params.email, active: true });
+    const user = await User.findOne({
+      email: params.email,
+      active: true,
+      is_deleted: false,
+    });
 
     if (!user) {
-      throw new AuthenticationError("email doesn't exist");
+      throw new AuthenticationError("User doesn't exist");
     }
 
     const valid = await bcrypt.compare(params.password, user.password);

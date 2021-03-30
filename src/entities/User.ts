@@ -26,7 +26,8 @@ export interface IUser {
   email: string;
   password: string;
   role: UserRoles;
-  active: Boolean;
+  active: boolean;
+  is_deleted: boolean;
   reviews: Review[];
   created_at: Date;
   updated_at: Date;
@@ -95,6 +96,10 @@ export class User extends BaseEntity implements IUser {
   @Field(() => Boolean)
   @Column("tinyint", { default: 0 })
   active: boolean;
+
+  @Field(() => Boolean)
+  @Column("tinyint", { default: 0 })
+  is_deleted: boolean;
 
   @Field(() => [Review])
   @OneToMany(() => Review, (review) => review.user)
