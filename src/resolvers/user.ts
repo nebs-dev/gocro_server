@@ -38,6 +38,11 @@ export class UserResolver {
     return User.find({ where: { is_deleted: false } });
   }
 
+  @Query(() => User)
+  async user(@Arg("id") id: number): Promise<User> {
+    return await User.findOneOrFail(id, { where: { is_deleted: false } });
+  }
+
   @Mutation(() => User)
   async updateUser(
     @Arg("id") id: number,
