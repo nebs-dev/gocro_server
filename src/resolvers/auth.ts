@@ -9,6 +9,7 @@ import {
   Resolver,
 } from "type-graphql";
 import bcrypt from "bcrypt";
+import randomString from "randomstring";
 import { JwtService } from "@services/JwtService";
 import {
   AuthenticationError,
@@ -18,6 +19,8 @@ import {
 import { MyContext } from "@shared/types";
 import { validate } from "class-validator";
 import { internalServerErr } from "@shared/constants";
+import { UserToken } from "@entities/UserToken";
+import dayjs from "dayjs";
 
 @InputType()
 class EmailPasswordInput {
@@ -42,7 +45,9 @@ class AuthReponse {
   @Field(() => User, { nullable: true })
   user?: User;
   @Field(() => String, { nullable: true })
-  token?: String;
+  token?: string;
+  @Field(() => String, { nullable: true })
+  refreshToken?: string;
 }
 
 const jwtService = new JwtService();
@@ -50,7 +55,10 @@ const jwtService = new JwtService();
 @Resolver()
 export class AuthResolver {
   @Mutation(() => AuthReponse)
-  async login(@Arg("params") params: EmailPasswordInput): Promise<AuthReponse> {
+  async login(
+    @Arg("params") params: EmailPasswordInput,
+    @Ctx() context: MyContext
+  ): Promise<AuthReponse> {
     const user = await User.findOne({
       email: params.email,
       active: true,
@@ -71,7 +79,29 @@ export class AuthResolver {
       user,
     });
 
-    return { user, token: accessToken };
+    const refreshToken = randomString.generate(200);
+    const userToken = new UserToken();
+    userToken.refresh_token = refreshToken;
+    userToken.user = user;
+    userToken.expires_at = dayjs().add(7, "day").toDate();
+    userToken.save();
+
+    context.res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 31,
+      secure: true,
+      sameSite: "none",
+    });
+
+    // Generate Refresh token
+
+    // Save Refresh token to DB
+
+    // return refresh token as response
+
+    // add refresh token as a cookie
+
+    return { user, token: accessToken, refreshToken: refreshToken };
   }
 
   @Mutation(() => AuthReponse)

@@ -1,12 +1,13 @@
 import { IClientData } from "@services/JwtService";
-import { Request } from "express";
+import { Request, Response } from "express";
 import Logger from "jet-logger";
 import { BaseEntity } from "typeorm";
 
 export type MyContext = {
   req: Request;
-  loggedIn: Boolean;
-  isAdmin: Boolean;
+  res: Response;
+  loggedIn: boolean;
+  isAdmin: boolean;
   tokenData: IClientData | null;
   logger: Logger;
 };

@@ -66,13 +66,14 @@ createConnection({
         ],
         validate: false,
       }),
-      context: async ({ req }) => {
+      context: async ({ req, res }) => {
         const loggedIn: Boolean = await isAuthenticated(req);
         const tokenData: IClientData | null = await getTokenData(req);
         const isAdmin: Boolean = tokenData ? tokenData.user.role === 1 : false;
 
         return {
           req,
+          res,
           loggedIn,
           isAdmin,
           tokenData,
@@ -89,7 +90,12 @@ createConnection({
       debug: true,
     });
 
-    apolloServer.applyMiddleware({ app });
+    const corsOptions = {
+      origin: "http://localhost:3000",
+      credentials: true,
+    };
+
+    apolloServer.applyMiddleware({ app, cors: corsOptions });
 
     // enable files upload
     app.use(
