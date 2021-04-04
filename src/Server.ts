@@ -10,8 +10,7 @@ import { databaseData } from "@shared/constants";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import fileUpload from "express-fileupload";
-import cors from "cors";
-
+import cookieParser from "cookie-parser";
 import { pagination } from "typeorm-pagination";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -67,9 +66,9 @@ createConnection({
         validate: false,
       }),
       context: async ({ req, res }) => {
-        const loggedIn: Boolean = await isAuthenticated(req);
+        const loggedIn: boolean = await isAuthenticated(req);
         const tokenData: IClientData | null = await getTokenData(req);
-        const isAdmin: Boolean = tokenData ? tokenData.user.role === 1 : false;
+        const isAdmin: boolean = tokenData ? tokenData.user.role === 1 : false;
 
         return {
           req,
@@ -95,7 +94,8 @@ createConnection({
       credentials: true,
     };
 
-    apolloServer.applyMiddleware({ app, cors: corsOptions });
+    app.use(cookieParser());
+    app.use(pagination);
 
     // enable files upload
     app.use(
@@ -103,8 +103,6 @@ createConnection({
         createParentPath: true,
       })
     );
-
-    app.use(pagination);
 
     // Show routes called in console during development
     if (process.env.NODE_ENV === "development") {
@@ -115,6 +113,8 @@ createConnection({
     if (process.env.NODE_ENV === "production") {
       app.use(helmet());
     }
+
+    apolloServer.applyMiddleware({ app, cors: corsOptions });
 
     var argv = require("minimist")(process.argv.slice(2));
     if (argv.fake && argv.fake === "true") {

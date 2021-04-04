@@ -79,29 +79,75 @@ export class AuthResolver {
       user,
     });
 
-    const refreshToken = randomString.generate(200);
-    const userToken = new UserToken();
-    userToken.refresh_token = refreshToken;
-    userToken.user = user;
-    userToken.expires_at = dayjs().add(7, "day").toDate();
-    userToken.save();
+    try {
+      const userToken = this.createUserToken(user, 7);
+      await userToken.save();
 
-    context.res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 31,
-      secure: true,
-      sameSite: "none",
+      this.setRefreshTokenCookie(context, userToken.refresh_token, 7);
+
+      return {
+        user,
+        token: accessToken,
+        refreshToken: userToken.refresh_token,
+      };
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => AuthReponse)
+  async refreshToken(
+    @Arg("refreshToken", { nullable: true }) refreshToken: string,
+    @Ctx() context: MyContext
+  ): Promise<AuthReponse> {
+    if (!refreshToken) {
+      if (!context.req.cookies.refresh_token)
+        throw new AuthenticationError("refreshToken not provided");
+
+      refreshToken = context.req.cookies.refresh_token;
+    }
+
+    const userToken = await UserToken.findOne(
+      {
+        refresh_token: refreshToken,
+      },
+      { relations: ["user"] }
+    );
+
+    if (!userToken) {
+      throw new AuthenticationError("Wrong refresh token provided");
+    }
+
+    if (!userToken.user) {
+      throw new AuthenticationError("User doesn't exist");
+    }
+
+    if (userToken.expires_at <= dayjs().toDate()) {
+      await userToken.remove();
+      throw new AuthenticationError("Refresh token expired");
+    }
+
+    const accessToken = await jwtService.getJwt({
+      id: userToken.user.id,
+      user: userToken.user,
     });
 
-    // Generate Refresh token
+    try {
+      const newUserToken = this.createUserToken(userToken.user, 7);
 
-    // Save Refresh token to DB
+      await newUserToken.save();
+      await userToken.remove();
 
-    // return refresh token as response
+      this.setRefreshTokenCookie(context, userToken.refresh_token, 7);
 
-    // add refresh token as a cookie
-
-    return { user, token: accessToken, refreshToken: refreshToken };
+      return {
+        user: newUserToken.user,
+        token: accessToken,
+        refreshToken: newUserToken.refresh_token,
+      };
+    } catch (e) {
+      throw new ApolloError(e);
+    }
   }
 
   @Mutation(() => AuthReponse)
@@ -126,16 +172,46 @@ export class AuthResolver {
     }
 
     try {
+      const userToken = this.createUserToken(user, 7);
+
       await user.save();
+      await userToken.save();
+
+      this.setRefreshTokenCookie(context, userToken.refresh_token, 7);
 
       const accessToken = await jwtService.getJwt({
         id: user.id,
         user,
       });
 
-      return { user, token: accessToken };
+      return {
+        user,
+        token: accessToken,
+        refreshToken: userToken.refresh_token,
+      };
     } catch (e) {
       throw new ApolloError(e);
     }
+  }
+
+  private createUserToken(user: User, daysValid: number) {
+    const userToken = new UserToken();
+    userToken.refresh_token = randomString.generate(200);
+    userToken.user = user;
+    userToken.expires_at = dayjs().add(daysValid, "day").toDate();
+    return userToken;
+  }
+
+  private setRefreshTokenCookie(
+    ctx: MyContext,
+    refreshToken: string,
+    daysValid: number
+  ) {
+    ctx.res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: daysValid * 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: "none",
+    });
   }
 }
