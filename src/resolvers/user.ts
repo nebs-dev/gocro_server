@@ -11,6 +11,7 @@ import {
 } from "type-graphql";
 import {
   ApolloError,
+  AuthenticationError,
   ForbiddenError,
   UserInputError,
 } from "apollo-server-express";
@@ -31,6 +32,10 @@ class UserInput {
 export class UserResolver {
   @Query(() => [User])
   async users(@Ctx() context: MyContext): Promise<User[]> {
+    if (!context.loggedIn) {
+      throw new AuthenticationError("User is not authenticated!");
+    }
+
     if (!context.isAdmin) {
       throw new ForbiddenError(forbiddenErr);
     }
