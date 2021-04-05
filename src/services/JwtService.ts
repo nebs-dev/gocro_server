@@ -21,7 +21,7 @@ export class JwtService {
 
   constructor() {
     this.secret = process.env.JWT_SECRET || randomString.generate(100);
-    this.options = { expiresIn: cookieProps.options.maxAge.toString() };
+    this.options = { expiresIn: "10m" };
   }
 
   /**

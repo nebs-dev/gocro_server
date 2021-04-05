@@ -9,6 +9,7 @@ import {
   Resolver,
 } from "type-graphql";
 import bcrypt from "bcrypt";
+import randomString from "randomstring";
 import { JwtService } from "@services/JwtService";
 import {
   AuthenticationError,
@@ -18,6 +19,8 @@ import {
 import { MyContext } from "@shared/types";
 import { validate } from "class-validator";
 import { internalServerErr } from "@shared/constants";
+import { UserToken } from "@entities/UserToken";
+import dayjs from "dayjs";
 
 @InputType()
 class EmailPasswordInput {
@@ -42,38 +45,15 @@ class AuthReponse {
   @Field(() => User, { nullable: true })
   user?: User;
   @Field(() => String, { nullable: true })
-  token?: String;
+  token?: string;
+  @Field(() => String, { nullable: true })
+  refreshToken?: string;
 }
 
 const jwtService = new JwtService();
 
 @Resolver()
 export class AuthResolver {
-  @Mutation(() => AuthReponse)
-  async login(@Arg("params") params: EmailPasswordInput): Promise<AuthReponse> {
-    const user = await User.findOne({
-      email: params.email,
-      active: true,
-      is_deleted: false,
-    });
-
-    if (!user) {
-      throw new AuthenticationError("User doesn't exist");
-    }
-
-    const valid = await bcrypt.compare(params.password, user.password);
-    if (!valid) {
-      throw new AuthenticationError("Incorrect pasword");
-    }
-
-    const accessToken = await jwtService.getJwt({
-      id: user.id,
-      user,
-    });
-
-    return { user, token: accessToken };
-  }
-
   @Mutation(() => AuthReponse)
   async register(
     @Arg("params") params: RegisterInput,
@@ -96,16 +76,172 @@ export class AuthResolver {
     }
 
     try {
+      const userToken = this.createUserToken(user, 7);
+
       await user.save();
+      await userToken.save();
+
+      this.setRefreshTokenCookie(context, userToken.refresh_token, 7);
 
       const accessToken = await jwtService.getJwt({
         id: user.id,
         user,
       });
 
-      return { user, token: accessToken };
+      return {
+        user,
+        token: accessToken,
+        refreshToken: userToken.refresh_token,
+      };
     } catch (e) {
       throw new ApolloError(e);
     }
+  }
+
+  @Mutation(() => AuthReponse)
+  async login(
+    @Arg("params") params: EmailPasswordInput,
+    @Ctx() context: MyContext
+  ): Promise<AuthReponse> {
+    const user = await User.findOne({
+      email: params.email,
+      active: true,
+      is_deleted: false,
+    });
+
+    if (!user) {
+      throw new AuthenticationError("User doesn't exist");
+    }
+
+    const valid = await bcrypt.compare(params.password, user.password);
+    if (!valid) {
+      throw new AuthenticationError("Incorrect pasword");
+    }
+
+    const accessToken = await jwtService.getJwt({
+      id: user.id,
+      user,
+    });
+
+    try {
+      const userToken = this.createUserToken(user, 7);
+      await userToken.save();
+
+      this.setRefreshTokenCookie(context, userToken.refresh_token, 7);
+
+      return {
+        user,
+        token: accessToken,
+        refreshToken: userToken.refresh_token,
+      };
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async logout(
+    @Arg("refreshToken", { nullable: true }) refreshToken: string,
+    @Ctx() context: MyContext
+  ): Promise<boolean> {
+    if (!refreshToken) {
+      if (!context.req.cookies.refresh_token)
+        throw new ApolloError("refreshToken not provided");
+
+      refreshToken = context.req.cookies.refresh_token;
+    }
+
+    try {
+      await UserToken.delete({ refresh_token: refreshToken });
+      this.deleteRefreshTokenCookie(context);
+      return true;
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  @Mutation(() => AuthReponse)
+  async refreshToken(
+    @Arg("refreshToken", { nullable: true }) refreshToken: string,
+    @Ctx() context: MyContext
+  ): Promise<AuthReponse> {
+    if (!refreshToken) {
+      if (!context.req.cookies.refresh_token)
+        throw new ApolloError("refreshToken not provided");
+
+      refreshToken = context.req.cookies.refresh_token;
+    }
+
+    const userToken = await UserToken.findOne(
+      {
+        refresh_token: refreshToken,
+      },
+      { relations: ["user"] }
+    );
+
+    if (!userToken) {
+      throw new ApolloError("Wrong refresh token provided");
+    }
+
+    if (!userToken.user) {
+      throw new ApolloError("User doesn't exist");
+    }
+
+    if (userToken.expires_at <= dayjs().toDate()) {
+      await userToken.remove();
+      throw new ApolloError("Refresh token expired");
+    }
+
+    const accessToken = await jwtService.getJwt({
+      id: userToken.user.id,
+      user: userToken.user,
+    });
+
+    try {
+      const newUserToken = this.createUserToken(userToken.user, 7);
+
+      await newUserToken.save();
+      await userToken.remove();
+
+      this.setRefreshTokenCookie(context, newUserToken.refresh_token, 7);
+
+      return {
+        user: newUserToken.user,
+        token: accessToken,
+        refreshToken: newUserToken.refresh_token,
+      };
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  private createUserToken(user: User, daysValid: number) {
+    const userToken = new UserToken();
+    userToken.refresh_token = randomString.generate(200);
+    userToken.user = user;
+    userToken.expires_at = dayjs().add(daysValid, "day").toDate();
+    return userToken;
+  }
+
+  private setRefreshTokenCookie(
+    ctx: MyContext,
+    refreshToken: string,
+    daysValid: number
+  ) {
+    ctx.res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: daysValid * 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: "none",
+    });
+  }
+
+  private deleteRefreshTokenCookie(ctx: MyContext) {
+    ctx.res.cookie("refresh_token", "", {
+      httpOnly: true,
+      maxAge: 0,
+      secure: true,
+      sameSite: "none",
+    });
   }
 }

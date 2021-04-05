@@ -4,7 +4,7 @@ import { IClientData } from "@services/JwtService";
 
 const jwtService = new JwtService();
 
-export const isAuthenticated = async (req: Request): Promise<Boolean> => {
+export const isAuthenticated = async (req: Request): Promise<boolean> => {
   try {
     // Get json-web-token
     const jwt = jwtService.extractToken(req);
