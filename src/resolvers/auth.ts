@@ -93,7 +93,7 @@ export class AuthResolver {
         token: accessToken,
         refreshToken: userToken.refresh_token,
       };
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -134,7 +134,7 @@ export class AuthResolver {
         token: accessToken,
         refreshToken: userToken.refresh_token,
       };
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -155,7 +155,7 @@ export class AuthResolver {
       await UserToken.delete({ refresh_token: refreshToken });
       this.deleteRefreshTokenCookie(context);
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -210,7 +210,7 @@ export class AuthResolver {
         token: accessToken,
         refreshToken: newUserToken.refresh_token,
       };
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

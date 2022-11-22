@@ -98,7 +98,7 @@ export class EventResolver {
       await event.save();
 
       return event;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -144,7 +144,7 @@ export class EventResolver {
       await event.save();
 
       return event;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -158,12 +158,12 @@ export class EventResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let event = await Event.findOneOrFail({ id });
+    const event = await Event.findOneOrFail({ id });
 
     try {
       await event.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

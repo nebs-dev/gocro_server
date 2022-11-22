@@ -4,8 +4,6 @@
  * Documentation: https://github.com/seanpmaxwell/jet-logger
  */
 
-import Logger from 'jet-logger';
-
-const logger = new Logger();
+import logger from 'jet-logger';
 
 export default logger;

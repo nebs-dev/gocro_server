@@ -104,7 +104,7 @@ export class PriceResolver {
       await price.save();
 
       return price;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -135,7 +135,7 @@ export class PriceResolver {
       await price.save();
 
       return price;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -149,12 +149,12 @@ export class PriceResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let price = await Price.findOneOrFail(id);
+    const price = await Price.findOneOrFail(id);
 
     try {
       await price.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

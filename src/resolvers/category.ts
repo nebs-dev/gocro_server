@@ -73,7 +73,7 @@ export class CategoryResolver {
       await category.save();
 
       return category;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -104,7 +104,7 @@ export class CategoryResolver {
       await category.save();
 
       return category;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

@@ -100,7 +100,7 @@ export class ReviewResolver {
       await review.save();
 
       return review;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -131,7 +131,7 @@ export class ReviewResolver {
       await review.save();
 
       return review;
-    } catch(e) {
+    } catch(e: any) {
       throw new ApolloError(e);
     }
   }
@@ -145,12 +145,12 @@ export class ReviewResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let review = await Review.findOneOrFail(id);
+    const review = await Review.findOneOrFail(id);
 
     try {
       await review.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

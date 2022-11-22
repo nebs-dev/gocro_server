@@ -116,8 +116,8 @@ createConnection({
 
     apolloServer.applyMiddleware({ app, cors: corsOptions });
 
-    var argv = require("minimist")(process.argv.slice(2));
-    if (argv.fake && argv.fake === "true") {
+    const argv = require("minimist")(process.argv.slice(2));
+    if (argv.fake && argv.fake === "true") {      
       fake();
     }
   })

@@ -116,7 +116,7 @@ export class TehnicalInfoResolver {
     try {
       await tehnicalInfo.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -150,7 +150,7 @@ export class TehnicalInfoResolver {
       await tehnicalInfo.save();
 
       return tehnicalInfo;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

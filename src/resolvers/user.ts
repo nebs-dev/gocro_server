@@ -74,7 +74,7 @@ export class UserResolver {
       await user.save();
 
       return user;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -94,7 +94,7 @@ export class UserResolver {
     try {
       await user.save();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

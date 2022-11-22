@@ -81,7 +81,7 @@ export class ClientResolver {
       await client.save();
 
       return client;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -112,7 +112,7 @@ export class ClientResolver {
       await client.save();
 
       return client;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -126,12 +126,12 @@ export class ClientResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let client = await Client.findOneOrFail({ id });
+    const client = await Client.findOneOrFail({ id });
 
     try {
       await client.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

@@ -94,7 +94,7 @@ export class GuidedInfoResolver {
       await guidedInfo.save();
 
       return guidedInfo;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -129,7 +129,7 @@ export class GuidedInfoResolver {
       await guidedInfo.save();
 
       return guidedInfo;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -143,12 +143,12 @@ export class GuidedInfoResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let guidedInfo = await GuidedInfo.findOneOrFail({ id });
+    const guidedInfo = await GuidedInfo.findOneOrFail({ id });
 
     try {
       await guidedInfo.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

@@ -77,7 +77,7 @@ export class LocationResolver {
       await location.save();
 
       return location;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -108,7 +108,7 @@ export class LocationResolver {
       await location.save();
 
       return location;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -122,12 +122,12 @@ export class LocationResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let location = await Location.findOneOrFail({ id });
+    const location = await Location.findOneOrFail({ id });
 
     try {
       await location.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

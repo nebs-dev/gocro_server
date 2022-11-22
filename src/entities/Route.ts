@@ -40,8 +40,8 @@ export interface IRoute {
   fitness_level: number;
   experience: number;
   note: string;
-  active: Boolean;
-  featured: Boolean;
+  active: boolean;
+  featured: boolean;
   location: Location;
   categories: Category[];
   client: Client;
@@ -105,7 +105,7 @@ export class Route extends BaseEntity implements IRoute {
   @ValidateNested()
   days: Day[];
 
-  @Field(() => [Price])
+  @Field(() => [Price], { nullable: true })
   @OneToMany(() => Price, (price) => price.route)
   @ValidateNested()
   prices: Price[];

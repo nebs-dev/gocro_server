@@ -47,7 +47,7 @@ export class JwtService {
       jsonwebtoken.verify(
         jwt,
         this.secret,
-        (err: VerifyErrors | null, decoded?: object) => {
+        (err, decoded) => {
           return err ? rej(this.VALIDATION_ERROR) : res(decoded as IClientData);
         }
       );

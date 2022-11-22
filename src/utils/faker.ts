@@ -13,18 +13,22 @@ let location_ids: Array<number> = [];
 let client_ids: Array<number> = [];
 
 export default async () => {
-  await generateCategories();
-  await generateLocations();
-  await generateClients();
-  await generateEvents();
-  await generateRoutes();
+  try {
+    generateCategories();
+    // generateLocations();
+    generateClients();
+    await generateEvents();
+    await generateRoutes();
+  } catch (e: any) {
+    console.log('ERROR:', e)
+  }
 };
 
 const getRandomId = (array: Array<number>) => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
-const generateCategories = async () => {
+const generateCategories = () => {
   for (let i = 0; i < 10; i++) {
     const category = Category.create({
       title: faker.commerce.productName(),
@@ -34,7 +38,7 @@ const generateCategories = async () => {
   }
 };
 
-const generateLocations = async () => {
+const generateLocations = () => {
   for (let i = 0; i < 10; i++) {
     const location = Location.create({
       title: faker.random.word(),
@@ -45,7 +49,7 @@ const generateLocations = async () => {
   }
 };
 
-const generateClients = async () => {
+const generateClients = () => {
   for (let i = 0; i < 10; i++) {
     const client = Client.create({
       name: faker.company.companyName(),
@@ -90,10 +94,10 @@ const generateRoutes = async () => {
       title: faker.lorem.words(),
       description: faker.lorem.words(),
       details: faker.lorem.paragraph(),
-      fitness_level: faker.random.number(5),
-      experience: faker.random.number(5),
+      fitness_level: faker.datatype.number(5),
+      experience: faker.datatype.number(5),
       active: true,
-      featured: faker.random.boolean(),
+      featured: faker.datatype.boolean(),
       categories: [category],
       location,
       client,
@@ -131,13 +135,13 @@ const generateDays = async (route: Route) => {
   }
 };
 
-const generateGuidedInfo = async (route: Route) => {
+const generateGuidedInfo = (route: Route) => {
   const gi = GuidedInfo.create({
-    age_min: faker.random.number(5),
-    age_max: faker.random.number(90),
+    age_min: faker.datatype.number(5),
+    age_max: faker.datatype.number(90),
     starts_from: faker.address.streetAddress(true),
-    people_min: faker.random.number(2),
-    people_max: faker.random.number(30),
+    people_min: faker.datatype.number(2),
+    people_max: faker.datatype.number(30),
     accommodation: faker.lorem.paragraph(),
     meals: faker.lorem.paragraph(),
     transfer: faker.lorem.paragraph(),
@@ -155,15 +159,15 @@ const generateGuidedInfo = async (route: Route) => {
   gi.save();
 };
 
-const generateTehnicalInfo = async (
+const generateTehnicalInfo = (
   route?: Route | undefined,
   day?: Day | undefined
 ) => {
   const ti = TehnicalInfo.create({
-    elevation_min: faker.random.number(10),
-    elevation_max: faker.random.number(3000),
-    length: faker.random.number(10000),
-    duration: faker.random.number(600),
+    elevation_min: faker.datatype.number(10),
+    elevation_max: faker.datatype.number(3000),
+    length: faker.datatype.number(10000),
+    duration: faker.datatype.number(600),
     route,
     day,
   });

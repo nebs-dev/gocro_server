@@ -41,7 +41,7 @@ class RouteCreateInput {
   @Field({ nullable: true })
   note: string;
   @Field({ nullable: true })
-  featured: Boolean;
+  featured: boolean;
   @Field(() => Int)
   location_id: number;
   @Field(() => [Int], { nullable: true })
@@ -63,7 +63,7 @@ class RouteUpdateInput {
   @Field(() => String, { nullable: true })
   note: string;
   @Field({ nullable: true })
-  featured: Boolean;
+  featured: boolean;
   @Field(() => Int, { nullable: true })
   location_id: number;
   @Field(() => [Int], { nullable: true })
@@ -128,7 +128,7 @@ export class RouteResolver {
       await route.save();
 
       return route;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -176,7 +176,7 @@ export class RouteResolver {
       await route.save();
 
       return route;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -190,12 +190,12 @@ export class RouteResolver {
       throw new ForbiddenError(forbiddenErr);
     }
 
-    let route = await Route.findOneOrFail({ id });
+    const route = await Route.findOneOrFail({ id });
 
     try {
       await route.remove();
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }

@@ -86,7 +86,7 @@ export class DayResolver {
       await day.save();
 
       return day;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -118,7 +118,7 @@ export class DayResolver {
       await day.save();
 
       return day;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
@@ -138,7 +138,7 @@ export class DayResolver {
       await day.remove();
 
       return true;
-    } catch (e) {
+    } catch (e: any) {
       throw new ApolloError(e);
     }
   }
